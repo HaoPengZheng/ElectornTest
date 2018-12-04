@@ -22,8 +22,12 @@
           >{{scope.row.order_type}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="detail.use_time" label="入住时间" width="180">
-        <template slot-scope="scope">{{scope.row.detail[0].use_time}}</template>
+      <el-table-column prop="detail.use_time" label="入住时间" width="220">
+        <template slot-scope="scope">
+          <p v-for="(detail,index) in scope.row.detail" :key="index">
+            {{getUseTimeByDetail(detail)}}
+          </p>
+          </template>
       </el-table-column>
       <el-table-column prop="customer" label="订购人" width="80"></el-table-column>
       <el-table-column prop="address" label="入住人"></el-table-column>
@@ -59,9 +63,29 @@ export default {
       OrderListHelper: OrderListHelper
     }
   },
+  methods: {
+    getUseTimeByDetail (detail) {
+      let name = ''
+      let goods = this.orderListMeta.goods
+      if (goods.hasOwnProperty(detail.goods_no)) {
+        name += goods[detail.goods_no]
+      } else {
+        name += detail.goods_no
+      }
+      name += `(${detail.use_time})*${detail.quantity}`
+      return name
+    }
+  },
   computed: {
     orderListData () {
-      return this.$store.getters.getOrderListObject.data
+      return this.$store.getters.getOrderListObject.data === undefined
+        ? null
+        : this.$store.getters.getOrderListObject.data
+    },
+    orderListMeta () {
+      return this.$store.getters.getOrderListObject.meta === undefined
+        ? null
+        : this.$store.getters.getOrderListObject.meta
     },
     isOrderTableLoading () {
       return this.$store.getters.getIsOrderTableLoading

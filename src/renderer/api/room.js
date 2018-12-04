@@ -26,3 +26,12 @@ export function getShopsRooms (query) {
     params: query
   })
 }
+
+// 房间入住业务
+export function checkIn (query) {
+  return request({
+    url: '/checkIn',
+    method: 'POST',
+    data: query
+  })
+}

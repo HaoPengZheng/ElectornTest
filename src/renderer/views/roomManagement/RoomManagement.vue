@@ -36,7 +36,6 @@ export default {
   methods: {
     getAllRoom: function () {
       hrooms().then(response => {
-        console.log(Object.keys(response.data.data).length)
         this.$store.dispatch('initRoomList', response.data.data)
       })
     }

@@ -5,7 +5,7 @@ import store from '@/store'
 
 const service = axios.create({
   baseURL: store.getters.base_api, // api的base_url
-  timeout: 5000 // request timeout
+  timeout: 10000 // request timeout
 })
 
 service.interceptors.request.use(config => {

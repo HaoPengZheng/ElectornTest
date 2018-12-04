@@ -2,6 +2,7 @@
   <div class="base-info-item">
     <div class="ellipsis">
       {{info.infoName}}
+      {{info.infoValue}}
       <svg class="icon" aria-hidden="true">
         <use xlink:href="info.iconName"></use>
       </svg>

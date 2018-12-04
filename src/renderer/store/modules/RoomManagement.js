@@ -1,3 +1,4 @@
+import Vue from 'vue'
 const state = {
   roomDetail: {
     visibility: false,
@@ -18,10 +19,12 @@ const getters = {
     return state.originalRoomData
   },
   getAllRooms: (state) => {
-    return state.roomList
+    let newRoomObject = converterRoomObject(state.originalRoomData)
+    return newRoomObject.roomList
   },
   getAllRoomsByFilter: (state) => {
-    return getRoomByFilter(state.typeFilter, state.floorFilter, state.roomList)
+    let newRoomObject = converterRoomObject(state.originalRoomData)
+    return getRoomByFilter(state.typeFilter, state.floorFilter, newRoomObject.roomList)
   },
   getFloorFilterOptions: (state) => {
     return state.floorOptions
@@ -49,6 +52,9 @@ const mutations = {
   Update_Type_Filter (state, filter) {
     state.typeFilter = filter
   },
+  Update_One_Room_By_Id (state, room) {
+    Vue.set(state.originalRoomData, room.room_num, room)
+  },
   Update_Room_Detail (state, roomDetail) {
     state.roomDetail = roomDetail
   }
@@ -58,7 +64,7 @@ const actions = {
   initRoomList ({ commit }, roomObject) {
     let newRoomObject = converterRoomObject(roomObject)
     commit('Init_Original_Room_Data', roomObject)
-    commit('Init_Room_List', newRoomObject.roomList)
+    // commit('Init_Room_List', newRoomObject.roomList)
     commit('Init_Floor_Options', newRoomObject.floorOptions)
     commit('Update_Floor_Filter', newRoomObject.floorOptions)
     commit('Init_Type_Options', newRoomObject.roomTypeOptions)
@@ -69,6 +75,9 @@ const actions = {
   },
   updateTypeFilter ({commit}, floorFilter) {
     commit('Update_Type_Filter', floorFilter)
+  },
+  updateOneRoomById ({commit}, room) {
+    commit('Update_One_Room_By_Id', room)
   },
   updateRoomDetail ({commit}, roomDetail) {
     commit('Update_Room_Detail', roomDetail)

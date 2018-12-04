@@ -12,6 +12,7 @@ import './icons/iconfont.css'
 import vuescroll from 'vuescroll'
 import ops from '@/utils/scrollOptions.js'
 import 'vuescroll/dist/vuescroll.css'
+import './notification'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.use(ElementUI)

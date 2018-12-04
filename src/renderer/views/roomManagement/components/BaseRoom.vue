@@ -2,8 +2,8 @@
   <div class="base-room" :class="roomTypeClass" @click="showDetail" @mouseleave="hiddenContextMenu" @contextmenu="showContextMenu">
     <div class="room-attribute">
       <div class="attribute-style">
-        <span class="room-number">{{roomInfo.room_num}}</span>
-        <span class="room-type">{{roomInfo.room_type_name}}</span>
+        <span class="room-number">{{getRoomInfo.room_num}}</span>
+        <span class="room-type">{{getRoomInfo.room_type_name}}</span>
       </div>
       <div class="status-icon">
         <svg class="icon" aria-hidden="true">
@@ -11,7 +11,7 @@
         </svg>
      </div>
       <div class="attribute-style">
-        <span class="room-number">{{roomInfo.people_num>0?roomInfo.people_num:""}}</span>
+        <span class="room-number">{{getRoomInfo.people_num>0?getRoomInfo.people_num:""}}</span>
         <span class="room-type">{{roomStatusLabel}}</span>
       </div>
     </div>
@@ -27,6 +27,7 @@
 </template>
 <script>
 import RoomManagementHelper from './RoomManagementHelper.js'
+import {checkIn} from '@/api/room'
 export default {
   name: 'base-room',
   data () {
@@ -34,8 +35,6 @@ export default {
       isShowContextMenu: false,
       contextOffsetX: 0,
       contextOffsetY: 0,
-      roomType: this.roomInfo.room_type,
-      roomStatus: this.roomInfo.state,
       roomManagementHelper: Object
     }
   },
@@ -47,17 +46,23 @@ export default {
   },
   computed: {
     roomStatusLabel () {
-      return this.roomManagementHelper.getLabelByStatus(this.roomStatus)
+      return this.roomManagementHelper.getLabelByStatus(this.getState)
     },
     roomTypeClass () {
       let classObj = {}
-      let cleanOrDirty = this.roomManagementHelper.getCleanOrDirtyBySattus(this.roomStatus)
+      let cleanOrDirty = this.roomManagementHelper.getCleanOrDirtyBySattus(this.getState)
       classObj[`status-${cleanOrDirty}`] = true
       classObj['activeContext'] = this.isShowContextMenu
       return classObj
     },
     iconType () {
-      return this.roomManagementHelper.getIconNameByStatus(this.roomStatus)
+      return this.roomManagementHelper.getIconNameByStatus(this.getState)
+    },
+    getRoomInfo () {
+      return this.roomInfo === undefined ? {state: ''} : this.roomInfo
+    },
+    getState () {
+      return this.roomInfo === undefined ? '' : this.roomInfo.state
     }
   },
   methods: {
@@ -65,13 +70,12 @@ export default {
       this.isShowContextMenu = true
       this.contextOffsetX = e.clientX
       this.contextOffsetY = e.clientY
-      console.log(this.contextOffsetX)
     },
     hiddenContextMenu: function () {
       this.isShowContextMenu = false
     },
     showDetail: function () {
-      this.$store.dispatch('updateRoomDetail', {visibility: true, roomId: this.roomInfo.room_id})
+      this.$store.dispatch('updateRoomDetail', {visibility: true, roomId: this.getRoomInfo.room_id})
     },
     cleanRoom: function (e) {
       e.stopPropagation()
@@ -90,8 +94,16 @@ export default {
     },
     checkIn: function (e) {
       e.stopPropagation()
-      this.roomStatus = 'OC'
-      this.isShowContextMenu = false
+      let roomId = []
+      roomId.push(this.getRoomInfo.room_num)
+      checkIn({'room_id': roomId}).then(response => {
+        const h = this.$createElement
+        this.$notify.error({
+          title: '错误',
+          /* eslint-disable  */
+          message: h('i', { style: 'color: teal'}, response.data.message)
+        })
+      })
     }
   }
 }
