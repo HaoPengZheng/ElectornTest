@@ -2,9 +2,14 @@
   <div>
     <div class="order-list-toolbar">
       <div class="toolbar-options">
-        <el-form :inline="true" :model="baseSearchModel" class="demo-form-inline" style="height: 40px;">
+        <el-form
+          :inline="true"
+          :model="baseSearchModel"
+          class="demo-form-inline"
+          style="height: 40px;"
+        >
           <el-form-item label="订单号:">
-            <div style="width:160px">
+            <div style="width:150px">
               <el-input v-model="baseSearchModel.no" placeholder="订单号" size="mini"></el-input>
             </div>
           </el-form-item>
@@ -14,14 +19,23 @@
             </div>
           </el-form-item>
           <el-form-item label="联系号码:">
-            <div style="width:100px">
+            <div style="width:110px">
               <el-input v-model="baseSearchModel.phone" placeholder="联系号码" size="mini"></el-input>
             </div>
           </el-form-item>
           <el-form-item label="入住时间:">
-            <el-date-picker v-model="baseSearchModel.user_time" type="date" placeholder="选择日期" size="mini" style="width: 100%;"></el-date-picker>
+            <div style="width:130px">
+              <el-date-picker
+                v-model="baseSearchModel.user_time"
+                type="date"
+                placeholder="选择日期"
+                size="mini"
+                style="width:100%"
+              ></el-date-picker>
+            </div>
           </el-form-item>
           <el-form-item>
+            <el-button type="primary" @click="cleanSearch" size="mini">清空</el-button>
             <el-button type="primary" @click="doBaseSearch" size="mini">查询</el-button>
             <el-button
               type="primary"
@@ -33,7 +47,7 @@
       </div>
       <div class="toolbar-pagination" style="padding-top：50px">
         <el-pagination
-          :pager-count="4"
+          :pager-count="5"
           :current-page="getCurrentPage"
           :page-sizes="[15,30,60]"
           :page-size="15"
@@ -102,12 +116,25 @@
               <el-option label="支付宝" value="beijing"></el-option>
             </el-select>
           </el-col>
-        </el-form-item> -->
+        </el-form-item>-->
         <el-form-item label="订单状态：">
           <el-input v-model="moreSearchModel.orderNum" :size="formUiSize"></el-input>
         </el-form-item>
         <el-form-item label="房型：">
-          <el-input v-model="moreSearchModel.orderNum" :size="formUiSize"></el-input>
+          <div class="room-type-checkbox" style="display:flex;justify-content:flex-start;">
+            <el-checkbox
+              label="全选"
+              v-model="checkAllTypes"
+              @change="handleChangeAllTypes"
+              style="margin-right:20px"
+            ></el-checkbox>
+            <el-checkbox-group
+              v-model="moreSearchModel.checkedRoomTypes"
+              @change="handleCheckedRoomTypes"
+            >
+              <el-checkbox v-for="(option,index) in roomTypeOptions" :key="index" :label="option"></el-checkbox>
+            </el-checkbox-group>
+          </div>
         </el-form-item>
         <!-- <el-form-item label="是否处理：">
           <el-col :span="4">
@@ -116,7 +143,7 @@
               <el-option label="已处理" value="beijing"></el-option>
             </el-select>
           </el-col>
-        </el-form-item> -->
+        </el-form-item>-->
         <el-form-item label="会员：">
           <el-input v-model="moreSearchModel.orderNum" :size="formUiSize"></el-input>
         </el-form-item>
@@ -125,7 +152,7 @@
             <el-input v-model="moreSearchModel.goodName" :size="formUiSize"></el-input>
           </el-col>
         </el-form-item>
-        <el-button type="primary" :size="formUiSize" @click="onSubmit">确定</el-button>
+        <el-button type="primary" :size="formUiSize">确定</el-button>
         <el-button :size="formUiSize">取消</el-button>
       </el-form>
     </div>
@@ -133,6 +160,8 @@
 </template>
 <script>
 import { getOrders } from '@/api/order'
+import { roomtypes } from '@/api/room'
+import { dateStringToDateNum, getNowFormatDate } from '@/utils/date'
 import objectUtil from '@/utils/ObjectUtil'
 export default {
   name: 'order-list-toolbar',
@@ -141,19 +170,33 @@ export default {
       isMoreSearchVisibility: false,
       formUiSize: 'small',
       fromInputSize: 8,
+      roomTypesObject: {},
+      roomTypeOptions: [],
+      checkAllTypes: false,
       baseSearchModel: {
         no: '',
         customer: '',
         phone: '',
-        user_time: ''
+        user_time: getNowFormatDate()
       },
       moreSearchModel: {
         goodName: '',
-        orderNum: ''
+        orderNum: '',
+        checkedRoomTypes: []
       }
     }
   },
+  created () {
+    this.getRoomtypes()
+  },
   methods: {
+    getRoomtypes () {
+      let shopId = this.$store.getters.shop
+      roomtypes(shopId).then(response => {
+        this.roomTypesObject = response.data.data
+        this.roomTypeOptions = this.converterRoomTypesObjectToRoomTypeOptionArr(this.roomTypesObject)
+      })
+    },
     sizeChange (limit) {
       let query = this.$store.getters.getOrderQuery
       query.page = 1
@@ -189,11 +232,40 @@ export default {
         limit: preQuery.limit
       }
       for (let key in this.baseSearchModel) {
-        if (this.baseSearchModel[key] !== '' && this.baseSearchModel[key] !== undefined) {
+        if (
+          this.baseSearchModel[key] !== '' &&
+          this.baseSearchModel[key] !== undefined
+        ) {
           query[key] = this.baseSearchModel[key]
         }
       }
+      if (query.hasOwnProperty('user_time')) {
+        query.user_time = dateStringToDateNum(query.user_time)
+      }
+      console.log(query)
       this.getOrdersByQuery(query)
+    },
+    handleChangeAllTypes (val) {
+      this.moreSearchModel.checkedRoomTypes = val ? this.roomTypeOptions : []
+    },
+    handleCheckedRoomTypes (value) {
+      let checkedCount = value.length
+      this.checkAllTypes = checkedCount === this.roomTypeOptions.length
+    },
+    converterRoomTypesObjectToRoomTypeOptionArr (roomTypesObject) {
+      let roomTypeNameArr = []
+      for (let key in roomTypesObject) {
+        roomTypeNameArr.push(roomTypesObject[key].type_name)
+      }
+      return roomTypeNameArr
+    },
+    cleanSearch () {
+      this.baseSearchModel = {
+        no: '',
+        customer: '',
+        phone: '',
+        user_time: ''
+      }
     }
   },
   computed: {
@@ -243,6 +315,10 @@ export default {
   justify-content: space-between;
   align-items: center;
   .toolbar-options {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .room-type-checkbox {
     display: flex;
     justify-content: flex-start;
   }

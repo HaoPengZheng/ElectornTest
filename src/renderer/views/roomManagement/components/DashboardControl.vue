@@ -2,19 +2,23 @@
   <div class="dashboard-control">
     <floor-filter></floor-filter>
     <room-filter></room-filter>
+    <anchor-room></anchor-room>
   </div>
 </template>
 <script>
 import RoomFilter from './RoomFilter'
 import FloorFilter from './FloorFilter'
+import AnchorRoom from './AnchorRoom'
 export default {
   components: {
     RoomFilter,
-    FloorFilter
+    FloorFilter,
+    AnchorRoom
   },
   data () {
     return {
-      show: false
+      show: false,
+      roomNum: ''
     }
   }
 }

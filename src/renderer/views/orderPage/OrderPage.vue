@@ -12,6 +12,7 @@
 <script>
 import OrderList from './components/OrderList'
 import { getOrders } from '@/api/order'
+import { dateStringToDateNum, getNowFormatDate } from '@/utils/date'
 export default {
   name: 'order-page',
   components: {
@@ -29,7 +30,7 @@ export default {
   methods: {
     getOrderList () {
       this.$store.dispatch('updateTableLoading', true)
-      getOrders({ phone: '13', page: 1 })
+      getOrders({ use_time: dateStringToDateNum(getNowFormatDate()) })
         .then(response => {
           this.$store.dispatch('updateOrderQuery', { phone: '13', page: 1 })
           this.$store.dispatch('updateOrderListData', response.data)

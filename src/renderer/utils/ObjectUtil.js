@@ -1,4 +1,5 @@
 class ObjectUtil {
+  // 克隆一个对象
   deepCopy (obj) {
     if (typeof obj !== 'object') {
       return obj

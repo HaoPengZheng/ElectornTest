@@ -35,3 +35,11 @@ export function checkIn (query) {
     data: query
   })
 }
+
+// 根据shop Id 获取房型
+export function roomtypes (id) {
+  return request({
+    url: `/roomtypes/${id}`,
+    method: 'get'
+  })
+}

@@ -20,6 +20,20 @@ const ALL_INFO_LABEL = {
   EXPARR: '预抵',
   EXPLEA: '预离'
 }
+const ALL_INFO_COLOR = {
+  IDLE: '#99CCFF',
+  LOCK: '#FF6633',
+  DIRTY: '#990033',
+  FIT: '#CCCCFF',
+  TEAM: '#FF3399',
+  VIP: '#c4b16f',
+  FREEDOM: '#6666FF',
+  HOUR: '#99CCCC',
+  RECEIVE: '#CC33FF',
+  REPAIR: '#FF3333',
+  EXPARR: '#FFCCCC',
+  EXPLEA: '#FFCCFF'
+}
 const DEFAULT_INFO_VALUE = ['100', '100', '100', '100', '100', '100', '100', '100', '100', '100', '100', '100', '100', '100', '100', '100']
 const DEFAULT_INFO = [{
   infoName: '空闲',
@@ -110,8 +124,10 @@ export default {
       let inputTypeList = []
       for (let key in ALL_INFO_LABEL) {
         let inputType = {}
+        inputType['infoType'] = key
         inputType['infoName'] = ALL_INFO_LABEL[key]
         inputType['infoValue'] = inputTypeObject.hasOwnProperty(key) ? inputTypeObject[key] : 0
+        inputType['color'] = ALL_INFO_COLOR[key]
         inputTypeList.push(inputType)
       }
       return inputTypeList
@@ -138,7 +154,7 @@ export default {
 </script>
 <style lang="scss" scoped>
   .info-item{
-    height: 60px;
+    height: 40px;
     display: flex;
     justify-content: space-around;
     align-items: center;

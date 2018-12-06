@@ -51,12 +51,12 @@ export default {
     .room-management-main{
       position: absolute;
       top: 0px;
-      bottom: 65px;
+      bottom: 45px;
       width: 100%;
     }
     .room-management-footer{
       background: #e4e4e4;
-      height: 60px;
+      height: 40px;
       position: absolute;
       bottom: 0;
       width: 100%;

@@ -1,6 +1,6 @@
 <template>
-  <div class="base-room" :class="roomTypeClass" @click="showDetail" @mouseleave="hiddenContextMenu" @contextmenu="showContextMenu">
-    <div class="room-attribute">
+  <div class="base-room" :style="roomBackgorundStyle" :id="`room${getRoomInfo.room_num}`" :class="roomTypeClass" @click="showDetail" @mouseleave="hiddenContextMenu" @contextmenu="showContextMenu">
+    <div class="room-attribute" :class="{emphasize:isAnchorRoomNum}">
       <div class="attribute-style">
         <span class="room-number">{{getRoomInfo.room_num}}</span>
         <span class="room-type">{{getRoomInfo.room_type_name}}</span>
@@ -48,11 +48,20 @@ export default {
     roomStatusLabel () {
       return this.roomManagementHelper.getLabelByStatus(this.getState)
     },
+    roomBackgorundStyle () {
+      if (this.$store.getters.getInputTypeFileter.isNeedInputTypeFileter) {
+        return {
+          background: this.$store.getters.getInputTypeFileter.emphasizeColor
+        }
+      }
+      return {}
+    },
     roomTypeClass () {
       let classObj = {}
       let cleanOrDirty = this.roomManagementHelper.getCleanOrDirtyBySattus(this.getState)
       classObj[`status-${cleanOrDirty}`] = true
       classObj['activeContext'] = this.isShowContextMenu
+      classObj['emphasize'] = this.isAnchorRoomNum
       return classObj
     },
     iconType () {
@@ -62,7 +71,13 @@ export default {
       return this.roomInfo === undefined ? {state: ''} : this.roomInfo
     },
     getState () {
-      return this.roomInfo === undefined ? '' : this.roomInfo.state
+      return this.roomInfo === undefined ? '' : this.getRoomInfo.state
+    },
+    getAnchorRoomNum () {
+      return this.$store.getters.getAnchorRoomNum
+    },
+    isAnchorRoomNum () {
+      return this.getRoomInfo.room_num === this.getAnchorRoomNum
     }
   },
   methods: {
@@ -98,8 +113,11 @@ export default {
       roomId.push(this.getRoomInfo.room_num)
       checkIn({'room_id': roomId}).then(response => {
         const h = this.$createElement
-        this.$notify.error({
-          title: '错误',
+        let type = response.data.status === 'false' ? 'error' : 'success'
+        let title = response.data.status === 'false' ? '操作失败' : '操作成功'
+        this.$notify({
+          type,
+          title,
           /* eslint-disable  */
           message: h('i', { style: 'color: teal'}, response.data.message)
         })
@@ -116,7 +134,7 @@ export default {
   max-width: 100%;
   cursor: pointer;
   display: flex;
-  border: 1px solid #ebeef5;
+  border: 2px solid #ebeef5;
   border-radius: 10px;
   margin-bottom: 5px;
   background-color: #fff;
@@ -164,9 +182,14 @@ export default {
       }
     }
   }
+  &.emphasize{
+    border:2px solid red;
+    box-sizing: border-box;
+  }
   .room-attribute{
     padding: 10px;
     width: 100%;
+    box-sizing: border-box;
     .attribute-style{
       display: flex;
       justify-content: space-between;

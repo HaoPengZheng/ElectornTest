@@ -9,7 +9,13 @@ const state = {
   floorOptions: [],
   floorFilter: [],
   typeOptions: [],
-  typeFilter: []
+  typeFilter: [],
+  anchorRoomNum: '',
+  inputTypeFileter: {
+    isNeedInputTypeFileter: false,
+    inputTypeName: '',
+    emphasizeColor: ''
+  }
 }
 const getters = {
   getRoomDetail: (state) => {
@@ -18,19 +24,25 @@ const getters = {
   getOriginRoomData: (state) => {
     return state.originalRoomData
   },
-  getAllRooms: (state) => {
-    let newRoomObject = converterRoomObject(state.originalRoomData)
-    return newRoomObject.roomList
-  },
+  // getAllRooms: (state) => {
+  //   let newRoomObject = converterRoomObject(state.originalRoomData)
+  //   return newRoomObject.roomList
+  // },
   getAllRoomsByFilter: (state) => {
     let newRoomObject = converterRoomObject(state.originalRoomData)
-    return getRoomByFilter(state.typeFilter, state.floorFilter, newRoomObject.roomList)
+    return getRoomByFilter(state.typeFilter, state.floorFilter, state.inputTypeFileter, newRoomObject.roomList)
   },
   getFloorFilterOptions: (state) => {
     return state.floorOptions
   },
   getTypeFilterOptions: (state) => {
     return state.typeOptions
+  },
+  getAnchorRoomNum: (state) => {
+    return state.anchorRoomNum
+  },
+  getInputTypeFileter: (state) => {
+    return state.inputTypeFileter
   }
 }
 const mutations = {
@@ -57,6 +69,12 @@ const mutations = {
   },
   Update_Room_Detail (state, roomDetail) {
     state.roomDetail = roomDetail
+  },
+  Update_Anchor_Room (state, anchorRoomNum) {
+    state.anchorRoomNum = anchorRoomNum
+  },
+  Update_Input_Type_Filter (state, inputTypeFileter) {
+    state.inputTypeFileter = inputTypeFileter
   }
 }
 
@@ -84,13 +102,39 @@ const actions = {
   },
   closeRoomDetail ({commit}) {
     commit('Update_Room_Detail', {visibility: false, roomId: null})
+  },
+  updateAnchorRoom ({commit}, roomNum) {
+    commit('Update_Anchor_Room', roomNum)
+  },
+  updateInputTypeFilter ({commit}, inputTypeFileter) {
+    commit('Update_Input_Type_Filter', inputTypeFileter)
   }
 }
 
-function getRoomByFilter (typeFilter, floorFilter, roomList) {
+function getRoomByFilter (typeFilter, floorFilter, inputTypeFileter, roomList) {
   let filterList = doFloorFilter(floorFilter, roomList)
   filterList = doTypeFilter(typeFilter, filterList)
+  filterList = doInputTypeFilter(inputTypeFileter, filterList)
   return filterList
+}
+
+// 根据input_type进行过滤
+function doInputTypeFilter (inputTypeFileter, roomList) {
+  if (!inputTypeFileter.isNeedInputTypeFileter) {
+    return roomList
+  }
+  let newRoomList = {}
+  for (let key in roomList) {
+    let floorList = roomList[key]
+    newRoomList[key] = []
+    floorList.forEach(element => {
+      let inputType = (element['input_type'] === '' || element['input_type'] === null) ? 'IDLE' : element['input_type']
+      if (inputType === inputTypeFileter.inputTypeName) {
+        newRoomList[key].push(element)
+      }
+    })
+  }
+  return newRoomList
 }
 
 // 根据选择的楼层过滤
