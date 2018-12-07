@@ -198,7 +198,7 @@ export default {
       })
     },
     sizeChange (limit) {
-      let query = this.$store.getters.getOrderQuery
+      let query = this.$store.state.OrderQuery.orderQuery
       query.page = 1
       query.limit = limit
       this.getOrdersByQuery(query)
@@ -206,7 +206,7 @@ export default {
     changePage (currentPage) {
       // let orderListData = this.$store.getters.getOrderListHistory.hasOwnProperty(currentPage) ? this.$store.getters.getOrderListHistory[currentPage] : undefined
       // if (orderListData === undefined) {
-      let query = objectUtil.deepCopy(this.$store.getters.getOrderQuery)
+      let query = objectUtil.deepCopy(this.$store.state.OrderQuery.orderQuery)
       query.page = currentPage
       this.getOrdersByQuery(query)
       // } else {
@@ -226,7 +226,7 @@ export default {
         })
     },
     doBaseSearch () {
-      let preQuery = objectUtil.deepCopy(this.$store.getters.getOrderQuery)
+      let preQuery = objectUtil.deepCopy(this.$store.state.OrderQuery.orderQuery)
       let query = {
         page: 1,
         limit: preQuery.limit
@@ -242,7 +242,6 @@ export default {
       if (query.hasOwnProperty('user_time')) {
         query.user_time = dateStringToDateNum(query.user_time)
       }
-      console.log(query)
       this.getOrdersByQuery(query)
     },
     handleChangeAllTypes (val) {

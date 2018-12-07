@@ -1,19 +1,27 @@
 <template>
   <div class="dashboard-control">
-    <floor-filter></floor-filter>
-    <room-filter></room-filter>
-    <anchor-room></anchor-room>
+    <div>
+      <floor-filter></floor-filter>
+      <room-filter></room-filter>
+      
+    </div>
+    <div class="dashboard-control-right" >
+      <anchor-room></anchor-room>
+       <clean-room-cache></clean-room-cache>
+    </div>
   </div>
 </template>
 <script>
 import RoomFilter from './RoomFilter'
 import FloorFilter from './FloorFilter'
 import AnchorRoom from './AnchorRoom'
+import CleanRoomCache from './CleanRoomCache'
 export default {
   components: {
     RoomFilter,
     FloorFilter,
-    AnchorRoom
+    AnchorRoom,
+    CleanRoomCache
   },
   data () {
     return {
@@ -28,6 +36,14 @@ export default {
   background: #fff;
   margin: 15px 0;
   padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .dashboard-control-right{
+    display:flex;
+    justify-content: space-between;
+    margin-right:20px;
+  }
 }
 .fiexd-left{
   position: fixed;

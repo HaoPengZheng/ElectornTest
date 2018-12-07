@@ -22,30 +22,31 @@ export default {
   },
   computed: {
     isActiveClass () {
-      let inputTypeFileter = this.$store.getters.getInputTypeFileter
-      return this.isActive && inputTypeFileter.inputTypeName === this.info.infoType
+      let otherTypeFilter = this.$store.state.RoomManagement.otherTypeFilter
+      return otherTypeFilter.isNeedFilter && otherTypeFilter.typeName === this.info.infoType
     }
   },
   methods: {
     filter () {
-      let inputTypeFilter
+      let otherTypeFilter = {}
       if (!this.isActiveClass) {
-        inputTypeFilter = {
-          isNeedInputTypeFileter: true,
-          inputTypeName: this.info.infoType,
+        otherTypeFilter = {
+          isNeedFilter: true,
+          filterType: this.info.infoType,
+          typeName: this.info.infoType,
           emphasizeColor: this.info.color
         }
         this.isActive = true
       } else {
         this.isActive = false
-        inputTypeFilter = {
-          isNeedInputTypeFileter: false,
-          inputTypeName: '',
+        otherTypeFilter = {
+          isNeedFilter: false,
+          filterType: '',
+          typeName: '',
           emphasizeColor: ''
         }
       }
-
-      this.$store.dispatch('updateInputTypeFilter', inputTypeFilter)
+      this.$store.dispatch('updateOtherTypeFilter', otherTypeFilter)
     }
   }
 }
@@ -67,7 +68,7 @@ export default {
   &:hover {
     background: #c4c4c4;
   }
-  &.active{
+  &.active {
     background: #11b3cf;
     color: #fff;
   }

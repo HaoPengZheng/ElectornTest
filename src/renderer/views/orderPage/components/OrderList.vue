@@ -30,7 +30,11 @@
           </template>
       </el-table-column>
       <el-table-column prop="customer" label="订购人" width="80"></el-table-column>
-      <el-table-column prop="address" label="入住人"></el-table-column>
+      <el-table-column prop="address" label="入住人">
+        <template slot-scope="scope">
+           {{scope.row.peoples}}
+        </template>
+      </el-table-column>
       <el-table-column prop="phone" label="电话" width="120"></el-table-column>
       <el-table-column prop="state" label="状态">
         <template slot-scope="scope">
@@ -88,7 +92,7 @@ export default {
         : this.$store.getters.getOrderListObject.meta
     },
     isOrderTableLoading () {
-      return this.$store.getters.getIsOrderTableLoading
+      return this.$store.state.OrderQuery.tableLoading
     }
   }
 }

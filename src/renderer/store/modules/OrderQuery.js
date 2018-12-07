@@ -7,15 +7,6 @@ const state = {
 const getters = {
   getOrderListObject: (state) => {
     return state.orderListData
-  },
-  getOrderListHistory: (state) => {
-    return state.orderListHistory
-  },
-  getOrderQuery: (state) => {
-    return state.orderQuery
-  },
-  getIsOrderTableLoading: (state) => {
-    return state.tableLoading
   }
 }
 const mutations = {

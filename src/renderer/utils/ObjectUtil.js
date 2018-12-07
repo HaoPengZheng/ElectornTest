@@ -10,5 +10,8 @@ class ObjectUtil {
     }
     return newobj
   }
+  isNotNullOrUndefined (obj) {
+    return obj !== null && obj !== undefined
+  }
 }
 export default new ObjectUtil()

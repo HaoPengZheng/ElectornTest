@@ -4,7 +4,7 @@
       <span>{{floorNumber}}F:</span>
     </div>
     <el-row :gutter="8">
-      <el-col :xl="3" :sm="6" :xs="12" v-for="(room) in floorRooms" :key="room.room_id">
+      <el-col :xl="2" :sm="6" :xs="12" v-for="(room) in floorRooms" :key="room.room_id">
         <base-room :roomInfo="room"></base-room>
       </el-col>
     </el-row>

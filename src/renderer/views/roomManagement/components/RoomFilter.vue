@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     getRoomTypeOption () {
-      return this.$store.getters.getTypeFilterOptions
+      return this.$store.state.RoomManagement.typeOptions
     }
   }
 }

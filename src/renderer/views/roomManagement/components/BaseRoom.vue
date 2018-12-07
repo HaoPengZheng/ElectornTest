@@ -11,8 +11,19 @@
         </svg>
      </div>
       <div class="attribute-style">
-        <span class="room-number">{{getRoomInfo.people_num>0?getRoomInfo.people_num:""}}</span>
-        <span class="room-type">{{roomStatusLabel}}</span>
+        <span class="room-number" style="color:#000;font-size:20px">  
+          <span v-show="isRoomPreOrder"> 
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-EXPARR"></use>
+            </svg>
+          </span>
+          &nbsp;
+        </span>
+        <span class="room-type" style="color:red;font-size:20px">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#icon-EXPLEA"></use>
+          </svg>
+        </span>
       </div>
     </div>
     <div class="room-context-menu" :style="{top:contextOffsetY+'px',left:contextOffsetX+'px'}">
@@ -26,7 +37,7 @@
   </div>
 </template>
 <script>
-import RoomManagementHelper from './RoomManagementHelper.js'
+import RoomManagementHelper from '@/utils/RoomManagementHelper.js'
 import {checkIn} from '@/api/room'
 export default {
   name: 'base-room',
@@ -35,23 +46,22 @@ export default {
       isShowContextMenu: false,
       contextOffsetX: 0,
       contextOffsetY: 0,
-      roomManagementHelper: Object
+      roomManagementHelper: RoomManagementHelper
     }
   },
   props: {
     roomInfo: Object
   },
   created: function () {
-    this.roomManagementHelper = new RoomManagementHelper()
   },
   computed: {
     roomStatusLabel () {
       return this.roomManagementHelper.getLabelByStatus(this.getState)
     },
     roomBackgorundStyle () {
-      if (this.$store.getters.getInputTypeFileter.isNeedInputTypeFileter) {
+      if (this.$store.state.RoomManagement.otherTypeFilter.isNeedFilter) {
         return {
-          background: this.$store.getters.getInputTypeFileter.emphasizeColor
+          background: this.$store.state.RoomManagement.otherTypeFilter.emphasizeColor
         }
       }
       return {}
@@ -74,10 +84,14 @@ export default {
       return this.roomInfo === undefined ? '' : this.getRoomInfo.state
     },
     getAnchorRoomNum () {
-      return this.$store.getters.getAnchorRoomNum
+      return this.$store.state.RoomManagement.anchorRoomNum
     },
     isAnchorRoomNum () {
       return this.getRoomInfo.room_num === this.getAnchorRoomNum
+    },
+    isRoomPreOrder () {
+      if (!this.getRoomInfo.hasOwnProperty('pre_order_no')) { return false }
+      return this.getRoomInfo.pre_order_no !== null && this.getRoomInfo.pre_order_no !== undefined && this.pre_order_no !== ''
     }
   },
   methods: {
@@ -130,7 +144,7 @@ export default {
 .base-room {
   width: 100%;
   height: 100%;
-  min-height: 100px;
+  min-height: 80px;
   max-width: 100%;
   cursor: pointer;
   display: flex;
@@ -146,15 +160,15 @@ export default {
     box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
   }
   &.status-dirty{
-    background-color:#f8d347;
+    background-color:#c4b16f;
   }
   &.status-clean{
     background-color: #6ccac9;
   }
   .status-icon{
     min-width: 80px;
-    font-size: 60px;
-    line-height: 60px;
+    font-size: 50px;
+    line-height: 50px;
     color: #fff;
   }
   &.activeContext .room-context-menu{

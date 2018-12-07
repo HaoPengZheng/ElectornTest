@@ -36,6 +36,7 @@ export default {
   methods: {
     getAllRoom: function () {
       hrooms().then(response => {
+        this.$store.dispatch('resetRoomManagement')
         this.$store.dispatch('initRoomList', response.data.data)
       })
     }

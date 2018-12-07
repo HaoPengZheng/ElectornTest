@@ -43,3 +43,10 @@ export function roomtypes (id) {
     method: 'get'
   })
 }
+
+export function cleanRoomsCache () {
+  return request({
+    url: '/cleanRoomsCache',
+    method: 'POST'
+  })
+}

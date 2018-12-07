@@ -1,4 +1,24 @@
 import Vue from 'vue'
+import RoomManagementHelper from '@/utils/RoomManagementHelper.js'
+const defaultState = {
+  roomDetail: {
+    visibility: false,
+    roomId: null
+  },
+  originalRoomData: {},
+  roomList: {},
+  floorOptions: [],
+  floorFilter: [],
+  typeOptions: [],
+  typeFilter: [],
+  anchorRoomNum: '',
+  otherTypeFilter: {
+    isNeedFilter: false,
+    filterType: 'state',
+    typeName: '',
+    emphasizeColor: ''
+  }
+}
 const state = {
   roomDetail: {
     visibility: false,
@@ -11,41 +31,26 @@ const state = {
   typeOptions: [],
   typeFilter: [],
   anchorRoomNum: '',
-  inputTypeFileter: {
-    isNeedInputTypeFileter: false,
-    inputTypeName: '',
+  otherTypeFilter: {
+    isNeedFilter: false,
+    filterType: 'state',
+    typeName: '',
     emphasizeColor: ''
   }
 }
 const getters = {
-  getRoomDetail: (state) => {
-    return state.roomDetail
-  },
-  getOriginRoomData: (state) => {
-    return state.originalRoomData
-  },
-  // getAllRooms: (state) => {
-  //   let newRoomObject = converterRoomObject(state.originalRoomData)
-  //   return newRoomObject.roomList
-  // },
   getAllRoomsByFilter: (state) => {
-    let newRoomObject = converterRoomObject(state.originalRoomData)
-    return getRoomByFilter(state.typeFilter, state.floorFilter, state.inputTypeFileter, newRoomObject.roomList)
+    let newRoomObject = RoomManagementHelper.converterRoomObject(state.originalRoomData)
+    return RoomManagementHelper.getRoomByFilter(state.typeFilter, state.floorFilter, state.otherTypeFilter, newRoomObject.roomList)
   },
-  getFloorFilterOptions: (state) => {
-    return state.floorOptions
-  },
-  getTypeFilterOptions: (state) => {
-    return state.typeOptions
-  },
-  getAnchorRoomNum: (state) => {
-    return state.anchorRoomNum
-  },
-  getInputTypeFileter: (state) => {
-    return state.inputTypeFileter
+  getCalculateType: (state) => {
+    return RoomManagementHelper.calculateType(state.originalRoomData)
   }
 }
 const mutations = {
+  Reset_RoomManagement (state) {
+    state = defaultState
+  },
   Init_Original_Room_Data (state, roomdata) {
     state.originalRoomData = roomdata
   },
@@ -73,14 +78,14 @@ const mutations = {
   Update_Anchor_Room (state, anchorRoomNum) {
     state.anchorRoomNum = anchorRoomNum
   },
-  Update_Input_Type_Filter (state, inputTypeFileter) {
-    state.inputTypeFileter = inputTypeFileter
+  Update_Other_Type_Filter (state, otherTypeFilter) {
+    state.otherTypeFilter = otherTypeFilter
   }
 }
 
 const actions = {
   initRoomList ({ commit }, roomObject) {
-    let newRoomObject = converterRoomObject(roomObject)
+    let newRoomObject = RoomManagementHelper.converterRoomObject(roomObject)
     commit('Init_Original_Room_Data', roomObject)
     // commit('Init_Room_List', newRoomObject.roomList)
     commit('Init_Floor_Options', newRoomObject.floorOptions)
@@ -106,85 +111,11 @@ const actions = {
   updateAnchorRoom ({commit}, roomNum) {
     commit('Update_Anchor_Room', roomNum)
   },
-  updateInputTypeFilter ({commit}, inputTypeFileter) {
-    commit('Update_Input_Type_Filter', inputTypeFileter)
-  }
-}
-
-function getRoomByFilter (typeFilter, floorFilter, inputTypeFileter, roomList) {
-  let filterList = doFloorFilter(floorFilter, roomList)
-  filterList = doTypeFilter(typeFilter, filterList)
-  filterList = doInputTypeFilter(inputTypeFileter, filterList)
-  return filterList
-}
-
-// 根据input_type进行过滤
-function doInputTypeFilter (inputTypeFileter, roomList) {
-  if (!inputTypeFileter.isNeedInputTypeFileter) {
-    return roomList
-  }
-  let newRoomList = {}
-  for (let key in roomList) {
-    let floorList = roomList[key]
-    newRoomList[key] = []
-    floorList.forEach(element => {
-      let inputType = (element['input_type'] === '' || element['input_type'] === null) ? 'IDLE' : element['input_type']
-      if (inputType === inputTypeFileter.inputTypeName) {
-        newRoomList[key].push(element)
-      }
-    })
-  }
-  return newRoomList
-}
-
-// 根据选择的楼层过滤
-function doFloorFilter (floorFilter, roomList) {
-  let filterRoomList = {}
-  floorFilter.forEach(element => {
-    filterRoomList[element] = roomList[element]
-  })
-  return filterRoomList
-}
-// 根据选择的房间类型过滤
-function doTypeFilter (typeFilter, roomList) {
-  if (typeof roomList !== 'object') {
-    return roomList
-  }
-  if (typeFilter.length < 1) {
-    return null
-  }
-  let newRoomList = {}
-  for (let key in roomList) {
-    let floorList = roomList[key]
-    newRoomList[key] = []
-    floorList.forEach(element => {
-      if (typeFilter.indexOf(element.room_type_name) !== -1) {
-        newRoomList[key].push(element)
-      }
-    })
-  }
-  return newRoomList
-}
-// 将房间数据转换成页面所需要的Object
-function converterRoomObject (roomObject) {
-  let roomList = {}
-  let roomTypeOptions = []
-  for (let key in roomObject) {
-    let floor = roomObject[key].floor
-    let roomType = roomObject[key].room_type_name
-    if (!roomList.hasOwnProperty(floor)) {
-      roomList[floor] = []
-    }
-    roomList[floor].push(roomObject[key])
-    if (roomTypeOptions.indexOf(roomType) === -1) {
-      roomTypeOptions.push(roomType)
-    }
-  }
-  let floorOptions = Object.keys(roomList)
-  return {
-    roomList,
-    floorOptions,
-    roomTypeOptions
+  updateOtherTypeFilter ({commit}, otherTypeFilter) {
+    commit('Update_Other_Type_Filter', otherTypeFilter)
+  },
+  resetRoomManagement ({commit}) {
+    commit('Reset_RoomManagement')
   }
 }
 

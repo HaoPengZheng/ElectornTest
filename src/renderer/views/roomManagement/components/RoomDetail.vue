@@ -27,7 +27,7 @@ export default {
       return this.roomDetail.visibility
     },
     roomDetail () {
-      return this.$store.getters.getRoomDetail
+      return this.$store.state.RoomManagement.roomDetail
     }
   }
 }

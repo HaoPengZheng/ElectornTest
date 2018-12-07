@@ -50,7 +50,7 @@ export default {
   },
   computed: {
     getFloorOptions () {
-      return this.$store.getters.getFloorFilterOptions
+      return this.$store.state.RoomManagement.floorOptions
     }
   }
 }
