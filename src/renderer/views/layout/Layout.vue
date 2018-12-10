@@ -7,6 +7,7 @@
           <router-link tag="li" to="/hotal-management/RoomSurplus">房态</router-link>
           <router-link tag="li" to="/hotal-management/ChooseRoom">排房</router-link>
           <router-link tag="li" to="/hotal-management/OrderPage">订单</router-link>
+          <router-link tag="li" to="/hotal-management/RoomAccountManagement">房间帐管理</router-link>
         </ul>
       </el-aside>
       <el-container>

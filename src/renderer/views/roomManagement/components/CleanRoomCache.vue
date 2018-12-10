@@ -24,5 +24,6 @@ export default {
 <style lang="scss" scoped>
 .clean-cache-btn {
   margin: 0 15px;
+  width: 120px;
 }
 </style>

@@ -1,13 +1,12 @@
 <template>
   <div class="dashboard-control">
-    <div>
+    <div class="control-filter">
       <floor-filter></floor-filter>
       <room-filter></room-filter>
-      
     </div>
-    <div class="dashboard-control-right" >
+    <div class="dashboard-control-right">
       <anchor-room></anchor-room>
-       <clean-room-cache></clean-room-cache>
+      <clean-room-cache></clean-room-cache>
     </div>
   </div>
 </template>
@@ -32,6 +31,19 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+@media screen and (min-width: 600px) and (max-width: 900px) {
+  .dashboard-control {
+    flex-direction: column;
+    display: none;
+    .dashboard-control-right {
+      display: flex;
+        flex-direction: row;
+      justify-content: flex-start;
+      width: 100%;
+      margin-right: 20px;
+    }
+  }
+}
 .dashboard-control {
   background: #fff;
   margin: 15px 0;
@@ -39,35 +51,13 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  .dashboard-control-right{
-    display:flex;
-    justify-content: space-between;
-    margin-right:20px;
+  .control-filter {
+    min-width: 800px;
   }
-}
-.fiexd-left{
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 320px;
-  height: 100%;
-  background: #000;
-  opacity: 0.5;
-  z-index: 999;
-}
-.fiexd-right{
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 320px;
-  height: 100%;
-  background: #fcfcfc;
-  z-index: 999;
-}
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
+  .dashboard-control-right {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 20px;
+  }
 }
 </style>

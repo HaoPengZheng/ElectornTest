@@ -7,31 +7,12 @@
 <script>
 import BaseFooterInfoItem from './BaseFooterInfoItem'
 import RoomManagementHelper from '@/utils/RoomManagementHelper.js'
-// const ALL_INFO_COLOR = {
-//   IDLE: '#99CCFF',
-//   LOCK: '#FF6633',
-//   DIRTY: '#990033',
-//   FIT: '#CCCCFF',
-//   TEAM: '#FF3399',
-//   VIP: '#f8d347',
-//   FREEDOM: '#6666FF',
-//   HOUR: '#99CCCC',
-//   RECEIVE: '#CC33FF',
-//   REPAIR: '#FF3333',
-//   EXPARR: '#FFCCCC',
-//   EXPLEA: '#FFCCFF'
-// }
 export default {
   components: {
     BaseFooterInfoItem
   },
   created () {
 
-  },
-  data () {
-    return {
-      keys: RoomManagementHelper.getAllKeys()
-    }
   },
   computed: {
     getCalculateType () {
@@ -40,7 +21,8 @@ export default {
     getCalculateInputTypeList () {
       let typeObject = RoomManagementHelper.getAllTypeObject()
       let inputTypeList = []
-      this.keys.forEach(key => {
+      console.log(RoomManagementHelper.getAllKeys())
+      RoomManagementHelper.getAllKeys().forEach(key => {
         let inputType = {}
         inputType['infoType'] = typeObject[key].key
         inputType['infoName'] = typeObject[key].label

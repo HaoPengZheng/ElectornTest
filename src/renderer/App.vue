@@ -13,4 +13,5 @@
 <style>
   @import url('./styles/icon.css');
   @import url('./styles/global.css');
+  @import url('./styles/bootstrap.css');
 </style>

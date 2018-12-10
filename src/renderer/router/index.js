@@ -6,6 +6,7 @@ import Layout from '../views/layout/Layout'
 import RoomSurplus from '../views/roomSurplus/RoomSurplus'
 import ChooseRoom from '../views/chooseRoom/ChooseRoom'
 import OrderPage from '../views/orderPage/OrderPage'
+import RoomAccountManagement from '../views/roomAccountManagement/RoomAccountManagement'
 Vue.use(Router)
 
 export default new Router({
@@ -42,6 +43,11 @@ export default new Router({
         path: '/hotal-management/OrderPage',
         name: 'OrderPage',
         component: OrderPage
+      },
+      {
+        path: '/hotal-management/RoomAccountManagement',
+        name: 'RoomAccountManagement',
+        component: RoomAccountManagement
       }
       ]
     }

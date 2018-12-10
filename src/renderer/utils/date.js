@@ -28,7 +28,7 @@ export function getDateWeekByDateString (dateString) {
   return week[d.getDay()]
 }
 
-// 求日期（YY-MM-dd）是星期几
+// 求时间戳（10位）是星期几
 export function getDateWeekByDateNum (dateNum) {
   let d = new Date(+(dateNum + '000'))
   let week = ['日', '一', '二', '三', '四', '五', '六']

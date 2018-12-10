@@ -3,11 +3,13 @@
     <div class="label">
       <span>{{floorNumber}}F:</span>
     </div>
-    <el-row :gutter="8">
-      <el-col :xl="2" :sm="6" :xs="12" v-for="(room) in floorRooms" :key="room.room_id">
-        <base-room :roomInfo="room"></base-room>
-      </el-col>
-    </el-row>
+    <div>
+      <el-row :gutter="8">
+        <el-col :xl="2" :md="4" :sm="6"  :xs="8" v-for="(room) in floorRooms" :key="room.room_id">
+          <base-room :roomInfo="room"></base-room>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 <script>
@@ -21,17 +23,18 @@ export default {
     floorNumber: String,
     floorRooms: Array
   },
-  computed: {
-
-  }
+  computed: {}
 }
 </script>
 <style lang="scss" scoped>
 .base-floor {
-  .label{
+  .label {
+    display: flex;
+    justify-content: flex-start;
     font-weight: 700;
     font-size: 24px;
     text-align: left;
+    color: #000;
   }
-} 
+}
 </style>

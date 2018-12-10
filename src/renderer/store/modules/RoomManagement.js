@@ -45,6 +45,9 @@ const getters = {
   },
   getCalculateType: (state) => {
     return RoomManagementHelper.calculateType(state.originalRoomData)
+  },
+  getHadCheckInRoom: (state) => {
+    return RoomManagementHelper.getHadCheckInRooms(state.originalRoomData)
   }
 }
 const mutations = {

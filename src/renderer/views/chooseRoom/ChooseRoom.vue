@@ -12,6 +12,7 @@
         <div class="date-scroll">
           <span class="date-item"
                 v-for="(dateItem, index) in dateList"
+                :key="index"
                 :class="{ active: (index === currentDateItem) }"
                 @click="dateItemClick(index, dateItem.timestamp)">
             {{dateItem.date}} ({{dateItem.week}})
@@ -24,6 +25,7 @@
               @click="typeItemClick(-1)">全部</span>
         <span class="type-item"
               v-for="typeItem in roomType"
+              :key="typeItem.type_id"
               :class="{ active: (typeItem.type_id === currentTypeId) }"
               @click="typeItemClick(typeItem.type_id)">{{typeItem.type_name}}</span>
       </div>
@@ -32,7 +34,8 @@
           <div class="floor-name">{{index}}F</div>
           <div class="floor-rooms">
             <div class="room-item"
-                 v-for="roomItem in floorItem"
+                 v-for="(roomItem, index) in floorItem"
+                 :key="index"
                  v-show="currentTypeId === -1 || currentTypeId === roomItem.type_id">
               {{roomItem.room_num}}<br/>
               <span class="type-name">{{roomItem.type_name}}</span>
@@ -47,7 +50,7 @@
 </template>
 
 <script>
-import { getShopsRooms } from '@/api/room'
+import { getShopsRooms, roomDayStatus } from '@/api/room'
 import { dateNumToDateString, getDateWeekByDateNum } from '@/utils/date'
 
 export default {
@@ -86,6 +89,10 @@ export default {
   methods: {
     dateItemClick: function (index, date) {
       this.currentDateItem = index
+      var query = { date: date }
+      roomDayStatus(query).then(response => {
+        console.log(response.data.data)
+      })
     },
     typeItemClick: function (typeId) {
       this.currentTypeId = typeId

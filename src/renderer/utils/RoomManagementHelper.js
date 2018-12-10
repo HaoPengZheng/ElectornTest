@@ -94,7 +94,7 @@ const inputTypeObject = {
   TEAM: {
     key: 'TEAM',
     label: '团队',
-    color: '#FF3399',
+    color: '#f598c6',
     defaultValue: 0
   },
   VIP: {
@@ -310,9 +310,7 @@ export class RoomManagementHelper {
   * 计算干净/不干净的房间 &&  input_type的房间 && Exc 类型的房间 的数量
   */
   calculateType(originObject) {
-    let calculateObject = {}
-    calculateObject = Object.assign(this.calculateCleanOrDirtyType(originObject),this.calculateExcType(originObject),this.calculateInputType(originObject))
-    return calculateObject
+    return Object.assign({},this.calculateCleanOrDirtyType(originObject),this.calculateExcType(originObject),this.calculateInputType(originObject))
   }
   /*
   * @param {Object} originObject
@@ -377,7 +375,20 @@ export class RoomManagementHelper {
     return keys
   }
   getAllTypeObject(){
-    return Object.assign(roomStatusObj,roomExpObj,inputTypeObject)
+    return Object.assign({},roomStatusObj,roomExpObj,inputTypeObject)
+  }
+  /*
+  /
+  */
+  getHadCheckInRooms(originObject){
+    let hadCheckInRooms= []
+    for (let key in originObject) {
+      let type = originObject[key].input_type
+      if (!ObjectUtil.isNotNullOrUndefined(type)) {
+        hadCheckInRooms.push(originObject[key])
+      }
+    }
+    return hadCheckInRooms
   }
 }
 export default new RoomManagementHelper()

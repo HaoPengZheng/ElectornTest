@@ -9,6 +9,15 @@ export function getRoomSurplus (query) {
   })
 }
 
+// 获取房间日预定状态
+export function roomDayStatus (query) {
+  return request({
+    url: '/roomdaystatus',
+    method: 'get',
+    params: query
+  })
+}
+
 // 获取店内房间信息（带缓存）
 export function hrooms (query) {
   return request({

@@ -9,7 +9,7 @@
           style="height: 40px;"
         >
           <el-form-item label="订单号:">
-            <div style="width:150px">
+            <div style="width:140px">
               <el-input v-model="baseSearchModel.no" placeholder="订单号" size="mini"></el-input>
             </div>
           </el-form-item>
@@ -19,12 +19,12 @@
             </div>
           </el-form-item>
           <el-form-item label="联系号码:">
-            <div style="width:110px">
+            <div style="width:105px">
               <el-input v-model="baseSearchModel.phone" placeholder="联系号码" size="mini"></el-input>
             </div>
           </el-form-item>
           <el-form-item label="入住时间:">
-            <div style="width:130px">
+            <div style="width:125px">
               <el-date-picker
                 v-model="baseSearchModel.user_time"
                 type="date"
@@ -198,7 +198,7 @@ export default {
       })
     },
     sizeChange (limit) {
-      let query = this.$store.state.OrderQuery.orderQuery
+      let query = objectUtil.deepCopy(this.$store.state.OrderQuery.orderQuery)
       query.page = 1
       query.limit = limit
       this.getOrdersByQuery(query)
