@@ -32,6 +32,7 @@
         <li @click="checkOut">退房</li>
         <li @click="cleanComplete">清洁完成</li>
         <li @click="checkIn">入住</li>
+        <li @click="placeOrder">下单</li>
       </ul>
     </div>
   </div>
@@ -136,6 +137,11 @@ export default {
           message: h('i', { style: 'color: teal'}, response.data.message)
         })
       })
+    },
+    placeOrder:function(e){
+      e.stopPropagation()
+      this.$store.dispatch('updateisShowRoomOrderDialog', true)
+      this.$store.dispatch('updateIsShowZoomIn', false)
     }
   }
 }

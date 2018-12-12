@@ -12,6 +12,8 @@ const defaultState = {
   typeOptions: [],
   typeFilter: [],
   anchorRoomNum: '',
+  isShowRoomOrderDialog: false,
+  isShowRoomOrderZoomIn: false,
   otherTypeFilter: {
     isNeedFilter: false,
     filterType: 'state',
@@ -36,7 +38,9 @@ const state = {
     filterType: 'state',
     typeName: '',
     emphasizeColor: ''
-  }
+  },
+  isShowRoomOrderDialog: false,
+  isShowRoomOrderZoomIn: false
 }
 const getters = {
   getAllRoomsByFilter: (state) => {
@@ -83,6 +87,12 @@ const mutations = {
   },
   Update_Other_Type_Filter (state, otherTypeFilter) {
     state.otherTypeFilter = otherTypeFilter
+  },
+  Update_Is_Show_Order_Dialog (state, isShowRoomOrderDialog) {
+    state.isShowRoomOrderDialog = isShowRoomOrderDialog
+  },
+  Update_Is_Show_ZoomIn (state, isShowRoomOrderZoomIn) {
+    state.isShowRoomOrderZoomIn = isShowRoomOrderZoomIn
   }
 }
 
@@ -119,6 +129,12 @@ const actions = {
   },
   resetRoomManagement ({commit}) {
     commit('Reset_RoomManagement')
+  },
+  updateisShowRoomOrderDialog ({commit}, isShowRoomOrderDialog) {
+    commit('Update_Is_Show_Order_Dialog', isShowRoomOrderDialog)
+  },
+  updateIsShowZoomIn ({commit}, isShowZoomIn) {
+    commit('Update_Is_Show_ZoomIn', isShowZoomIn)
   }
 }
 

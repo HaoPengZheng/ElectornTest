@@ -42,5 +42,6 @@ export default {
   padding-right: 15px;
   height: 100%;
   overflow-x: hidden;
+  padding: 0 30px;
 }
 </style>

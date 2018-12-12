@@ -21,7 +21,6 @@ export default {
     getCalculateInputTypeList () {
       let typeObject = RoomManagementHelper.getAllTypeObject()
       let inputTypeList = []
-      console.log(RoomManagementHelper.getAllKeys())
       RoomManagementHelper.getAllKeys().forEach(key => {
         let inputType = {}
         inputType['infoType'] = typeObject[key].key

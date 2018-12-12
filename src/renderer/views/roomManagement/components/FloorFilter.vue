@@ -1,6 +1,6 @@
 <template>
   <div class="floor-filter">
-    <span style="font-weight:700">选择楼层：</span>
+    <!-- <span style="font-weight:700">选择楼层：</span>
     <div class="all-type-select">
       <el-checkbox
         border
@@ -14,43 +14,65 @@
       <el-checkbox-group v-model="checkedfloorTypes" @change="handleCheckedFloorTypesChange">
         <el-checkbox border size="small" v-for="floorType in getFloorOptions" :label="floorType" :key="floorType">{{floorType}}F</el-checkbox>
       </el-checkbox-group>
-    </div>
+    </div> -->
+    <radio v-model="radio" size='small' :items="getFloorOptions" @change="handleChange"></radio>
   </div>
 </template>
 <script>
+import Radio from '@/components/Radio/Radio'
 export default {
+  components: {
+    Radio
+  },
   data () {
     return {
       checkAll: true,
       checkedfloorTypes: [],
-      isIndeterminate: false
+      isIndeterminate: false,
+      radio: '全选'
     }
   },
-  created: function () {
-    this.initCheckedFloorTypes()
-  },
+  // created: function () {
+  //   this.initCheckedFloorTypes()
+  //   console.log(this.getFloorOptions)
+  // },
   methods: {
-    initCheckedFloorTypes () {
-      this.checkedfloorTypes = this.getFloorOptions
-    },
-    handleCheckAllChange (val) {
-      this.checkedfloorTypes = val ? this.getFloorOptions : []
-      this.isIndeterminate = false
-      this.updateFloorFilter()
-    },
-    handleCheckedFloorTypesChange (value) {
-      let checkedCount = value.length
-      this.checkAll = checkedCount === this.getFloorOptions.length
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.getFloorOptions.length
-      this.updateFloorFilter()
-    },
-    updateFloorFilter () {
-      this.$store.dispatch('updateFloorFilter', this.checkedfloorTypes)
+    handleChange () {
+      if (this.radio === '全选') {
+        this.$store.dispatch('updateFloorFilter', this.$store.state.RoomManagement.floorOptions)
+      } else {
+        let floor = parseInt(this.radio)
+        let array = []
+        array.push(floor)
+        this.$store.dispatch('updateFloorFilter', array)
+      }
     }
+    // initCheckedFloorTypes () {
+    //   this.checkedfloorTypes = this.getFloorOptions
+    // },
+    // handleCheckAllChange (val) {
+    //   this.checkedfloorTypes = val ? this.getFloorOptions : []
+    //   this.isIndeterminate = false
+    //   this.updateFloorFilter()
+    // },
+    // handleCheckedFloorTypesChange (value) {
+    //   let checkedCount = value.length
+    //   this.checkAll = checkedCount === this.getFloorOptions.length
+    //   this.isIndeterminate = checkedCount > 0 && checkedCount < this.getFloorOptions.length
+    //   this.updateFloorFilter()
+    // },
+    // updateFloorFilter () {
+    //   this.$store.dispatch('updateFloorFilter', this.checkedfloorTypes)
+    // }
   },
   computed: {
     getFloorOptions () {
-      return this.$store.state.RoomManagement.floorOptions
+      let option = []
+      this.$store.state.RoomManagement.floorOptions.forEach((ele) => {
+        option.push(`${ele}F`)
+      })
+      option.unshift('全选')
+      return option
     }
   }
 }
