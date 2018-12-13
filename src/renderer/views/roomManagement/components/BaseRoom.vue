@@ -140,6 +140,7 @@ export default {
     },
     placeOrder:function(e){
       e.stopPropagation()
+      this.$store.dispatch('updateRoomId',this.roomInfo)
       this.$store.dispatch('updateisShowRoomOrderDialog', true)
       this.$store.dispatch('updateIsShowZoomIn', false)
     }

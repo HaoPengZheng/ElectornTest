@@ -32,6 +32,7 @@ export default {
     color: #fff;
     border-radius:4px!important;
     margin: 0 8px;
+    box-shadow:0px;
     &:hover{
       color:#fff;
       background: darkgreen;

@@ -37,10 +37,10 @@ export default {
 <style lang="scss" scoped>
 .room-dashboard {
   box-sizing: border-box;
-  padding: 0 5px;
   overflow: hidden;
   padding-right: 15px;
   height: 100%;
+  width: 100%;
   overflow-x: hidden;
   padding: 0 30px;
 }

@@ -101,8 +101,7 @@ export default {
 
 <style lang="scss">
 #room-order-base-tabs > .el-tabs__content {
-  min-height: 100%;
-  max-height: 700px;
+  height: -webkit-fill-available;
   overflow: scroll;
   overflow-x: hidden;
   padding: 15px 15px 30px 15px !important;

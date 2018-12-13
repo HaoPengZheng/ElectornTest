@@ -30,7 +30,6 @@
           </div>
         </div>
         <room-order></room-order>
-        <button @click="handleClose">关闭</button>
       </div>
     </div>
   </div>
@@ -88,7 +87,9 @@ export default {
   position: relative;
   .room-management-main {
     position: absolute;
-    top: 0px;
+    top: 0;
+    right: 0;
+    left: 0;
     bottom: 45px;
   }
   .room-management-footer {
