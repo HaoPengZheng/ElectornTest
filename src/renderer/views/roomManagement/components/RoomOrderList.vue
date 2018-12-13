@@ -1,7 +1,10 @@
 <template>
   <div>
-    <div v-for="(order,index) in getRoomOrderList" :key="index">
-      <room-order-list-item></room-order-list-item>
+    <div v-if="getRoomOrderList.length===0">
+      无订单
+    </div>
+    <div v-for="(product,index) in getRoomOrderList" :key="index">
+      <room-order-list-item :product="product" :index="index"></room-order-list-item>
     </div>
   </div>
 </template>
@@ -13,7 +16,7 @@ export default {
   },
   computed: {
     getRoomOrderList () {
-      return this.$store.state.RoomPlaceOrder.orderList
+      return Object.values(this.$store.state.RoomPlaceOrder.orderProductList)
     }
   }
 }

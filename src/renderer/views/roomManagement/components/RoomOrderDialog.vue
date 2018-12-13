@@ -2,7 +2,7 @@
   <el-dialog
     :visible="getIsShowRoomOrderDialog"
     :show-close="false"
-    width="40%"
+    width="50%"
     custom-class="room-order-dialog"
     :before-close="handleClose"
   >
@@ -65,7 +65,8 @@ export default {
 <style lang="scss" scoped>
 
 .room-order-dialog{
-  min-width: 500px;
+  min-width: 700px;
+  max-height: 700px;
   position:relative;
 }
 .self-dialog-title {

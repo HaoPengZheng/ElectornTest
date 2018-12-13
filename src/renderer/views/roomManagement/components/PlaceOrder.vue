@@ -8,8 +8,9 @@
     </under-line>
     <div id="room-order-choose-tabs">
       <el-tabs v-model="activeTabName">
-        <el-tab-pane label="酒店材料" name="first">
-          <base-product></base-product>
+        <el-tab-pane label="酒店材料" name="first" style="display:flex">
+          <base-product :productInfo="{productName:'扑克',price:'1.00',remain:'37',quantifier:'副'}"></base-product>
+          <base-product :productInfo="{productName:'袜子',price:'18.00',remain:'37',quantifier:'双'}"></base-product>
         </el-tab-pane>
         <el-tab-pane label="其他" name="second">配置管理</el-tab-pane>
         <el-tab-pane label="婴儿用品" name="third">角色管理</el-tab-pane>
@@ -32,7 +33,7 @@
     <under-line lineColor="red">
       <span slot="left">备注</span>
     </under-line>
-    <div class="mg-top-20 mg-bottom-10">
+    <div class="mg-top-20 mg-bottom-10" style="min-height:150px;">
       <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="remark"></el-input>
     </div>
   </div>
@@ -50,7 +51,8 @@ export default {
   data () {
     return {
       isDeliveryWhenAbsent: false,
-      activeTabName: 'first'
+      activeTabName: 'first',
+      remark: ''
     }
   }
 }

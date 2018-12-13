@@ -1,11 +1,11 @@
 <template>
   <div class="base-product" @click="addProduct">
     <div class="product-name">
-      {{orderName}}
+      {{productInfo.productName}}
     </div>
     <div class="product-price">
-      <span>{{price}} / 个</span>
-      <span>剩余{{remain}}个</span>
+      <span>{{productInfo.price}} / {{productInfo.quantifier}}</span>
+      <span>剩余{{productInfo.remain}}{{productInfo.quantifier}}</span>
     </div>
   </div>
 </template>
@@ -13,14 +13,14 @@
 export default {
   data () {
     return {
-      orderName: '扑克',
-      price: '0.00',
-      remain: '37'
     }
+  },
+  props: {
+    productInfo: Object
   },
   methods: {
     addProduct () {
-      this.$store.dispatch('increaseProduct', this.orderName)
+      this.$store.dispatch('increaseProduct', this.productInfo)
     }
   }
 }
@@ -32,6 +32,7 @@ export default {
   background: #eee;
   padding: 12px 8px;
   border-radius: 4px;
+  margin: 10px 15px;
   cursor: pointer;
   .product-name{
     text-align: left;

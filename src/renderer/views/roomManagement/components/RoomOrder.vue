@@ -107,14 +107,12 @@ export default {
   padding: 15px 15px 30px 15px !important;
 }
 .room-order {
+  height: 100%;
   .el-tabs {
-    min-height: 100%;
-    max-height: 700px;
     overflow: hidden;
   }
 
   .el-tabs {
-    padding-bottom: 20px;
   }
   .el-table {
     margin-bottom: 20px;
@@ -127,6 +125,8 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-.room-order {
+#room-order-base-tabs{
+  height: 100%;
+  padding-bottom: 10px;
 }
 </style>
