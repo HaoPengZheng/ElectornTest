@@ -1,17 +1,26 @@
 <template>
   <div class="room-order-list-item">
-    <span>{{product.productName}}</span>
-    <el-input-number v-model="count" size="mini" :min="1" :max="parseInt(product.remain)" label="描述文字"></el-input-number>
-    <span>单价：{{product.price}}</span>
-    <span>总价：{{totalPrice}}</span>
-    <el-button type="danger" size="mini" @click="deleteProduct">删除</el-button>
-  </div>  
+    <span class="item">{{product.productName}}</span>
+    <span class="item">
+      <el-input-number
+        v-model="count"
+        size="mini"
+        :min="1"
+        :max="parseInt(product.remain)"
+        label="描述文字"
+      ></el-input-number>
+    </span>
+    <span class="item">单价：{{product.price}}</span>
+    <span class="item">总价：{{totalPrice}}</span>
+    <span class="item">
+      <el-button type="danger" size="mini" @click="deleteProduct">删除</el-button>
+    </span>
+  </div>
 </template>
 <script>
 export default {
   data () {
-    return {
-    }
+    return {}
   },
   props: {
     product: Object,
@@ -30,7 +39,7 @@ export default {
       }
     },
     totalPrice () {
-      return this.product.price * this.count
+      return (this.product.price * this.count).toFixed(2)
     }
   },
   methods: {
@@ -41,7 +50,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.room-order-list-item{
+.room-order-list-item {
   border-bottom: 1px solid #eee;
   display: flex;
   justify-content: space-around;
@@ -49,5 +58,11 @@ export default {
   padding: 10px 0;
   text-align: center;
   line-height: 28px;
+  .item{
+    width: 150px;
+    padding-left: 15px;
+    text-align: left;
+    flex-basis: 200px;
+  }
 }
 </style>

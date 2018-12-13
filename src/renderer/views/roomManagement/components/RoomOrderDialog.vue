@@ -13,17 +13,19 @@
         </svg>
       </div>
       <div class="option" @click="handleClose" title="关闭">
-      <svg class="icon" aria-hidden="true">
-        <use xlink:href="#icon-guanbi"></use>
-      </svg>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-guanbi"></use>
+        </svg>
       </div>
     </div>
     <!-- <span>这是一段信息</span> -->
-    <div><room-order></room-order></div>
+    <div>
+      <room-order></room-order>
+    </div>
     <!-- <span slot="footer" class="dialog-footer">
       <el-button @click="dialogVisible = false">取 消</el-button>
       <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-    </span> -->
+    </span>-->
   </el-dialog>
 </template>
 <script>
@@ -54,24 +56,26 @@ export default {
   }
 }
 </script>
-<style>
-.el-dialog__header{
-  padding:0px!important;
-}
-.el-dialog__body{
-  padding: 0px!important;
+<style lang="scss">
+.room-order-dialog {
+  .el-dialog__header {
+    padding: 0px !important;
+  }
+  .el-dialog__body {
+    padding: 0px !important;
+    max-height: 700px;
+  }
 }
 </style>
 <style lang="scss" scoped>
-
-.room-order-dialog{
+.room-order-dialog {
   min-width: 700px;
   max-height: 700px;
-  position:relative;
+  position: relative;
 }
 .self-dialog-title {
   position: absolute;
-  top:0;
+  top: 0;
   right: 0;
   z-index: 999;
   width: 60px;
@@ -81,7 +85,7 @@ export default {
   .option {
     cursor: pointer;
     padding: 0 8px;
-    &:hover{
+    &:hover {
       color: rgb(48, 132, 228);
     }
   }

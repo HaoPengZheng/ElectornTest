@@ -1,5 +1,5 @@
 import Vue from 'vue'
-
+import { Message } from 'element-ui'
 const state = {
   roomInfo: Object,
   orderProductList: {}
@@ -36,6 +36,11 @@ const actions = {
   },
   deleteProductInOrderList ({commit}, product) {
     commit('Delete_Product', product)
+    Message({
+      message: '成功删除',
+      type: 'success',
+      duration: 1 * 1000
+    })
   },
   updateProductCount ({commit}, product) {
     commit('Update_Product_Count', product)

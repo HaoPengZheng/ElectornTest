@@ -34,6 +34,10 @@ export default {
   border-radius: 4px;
   margin: 10px 15px;
   cursor: pointer;
+  &:hover{
+    background: #d47676;
+    color: #fff;
+  }
   .product-name{
     text-align: left;
   }

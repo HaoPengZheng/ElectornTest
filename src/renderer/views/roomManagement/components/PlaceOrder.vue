@@ -8,13 +8,11 @@
     </under-line>
     <div id="room-order-choose-tabs">
       <el-tabs v-model="activeTabName">
-        <el-tab-pane label="酒店材料" name="first" style="display:flex">
-          <base-product :productInfo="{productName:'扑克',price:'1.00',remain:'37',quantifier:'副'}"></base-product>
-          <base-product :productInfo="{productName:'袜子',price:'18.00',remain:'37',quantifier:'双'}"></base-product>
+        <el-tab-pane v-for="(type,index) in goodsType" :key="index" :label="type" :name="type">
+          <div style="display:flex;flex-wrap:wrap">
+            <base-product v-for="(product,index) in getProductByGoodType(type)" :key="index" :productInfo="product"></base-product>
+          </div>
         </el-tab-pane>
-        <el-tab-pane label="其他" name="second">配置管理</el-tab-pane>
-        <el-tab-pane label="婴儿用品" name="third">角色管理</el-tab-pane>
-        <el-tab-pane label="衣服类" name="fourth">定时任务补偿</el-tab-pane>
       </el-tabs>
     </div>
     <under-line lineColor="red">
@@ -42,17 +40,41 @@
 import UnderLine from '@/components/UnderLine/UnderLine'
 import BaseProduct from './BaseProduct'
 import RoomOrderList from './RoomOrderList'
+class Product {
+  constructor (productName, price, remain, quantifier) {
+    this.productName = productName
+    this.price = price
+    this.remain = remain
+    this.quantifier = quantifier
+  }
+}
 export default {
   components: {
     UnderLine,
     BaseProduct,
     RoomOrderList
   },
+  props: {
+    goodsType: Object,
+    goodsData: Array
+  },
   data () {
     return {
       isDeliveryWhenAbsent: false,
-      activeTabName: 'first',
+      activeTabName: '酒店材料',
       remark: ''
+    }
+  },
+  methods: {
+    getProductByGoodType (type) {
+      let products = []
+      this.goodsData.forEach(element => {
+        if (element.goodstype_name === type) {
+          products.push(new Product(element.materials_name, element.unit_price, element.quantity, element.unit))
+        }
+      })
+      console.log(products)
+      return products
     }
   }
 }
@@ -75,14 +97,14 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-.mg-top-20{
+.mg-top-20 {
   margin-top: 20px;
 }
-.mg-bottom-10{
+.mg-bottom-10 {
   margin-bottom: 10px;
 }
-.delivery{
+.delivery {
   display: flex;
-  justify-content:flex-start;
+  justify-content: flex-start;
 }
 </style>

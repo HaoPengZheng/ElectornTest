@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import axios from 'axios'
 
 // 获取房态列表
 export function getRoomSurplus (query) {
@@ -53,9 +54,21 @@ export function roomtypes (id) {
   })
 }
 
+// 清理缓存
 export function cleanRoomsCache () {
   return request({
     url: '/cleanRoomsCache',
     method: 'POST'
+  })
+}
+
+// 获取房间下单的商品类型
+export function getRoomGoods () {
+  return new Promise(function (resolve, reject) {
+    axios.get('http://192.168.101.128/oqc/index.php/66/?app=api&mod=RoomService&act=getRoomGoods&shop_id=49&company_id=66').then(resp => {
+      resolve(resp)
+    }).catch(err => {
+      reject(err)
+    })
   })
 }

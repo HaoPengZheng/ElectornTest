@@ -2,7 +2,7 @@
   <div class="room-order">
     <el-tabs type="border-card" id="room-order-base-tabs">
       <el-tab-pane label="下单">
-       <place-order></place-order>
+       <place-order :goodsType="goods_type" :goodsData="goods_data"></place-order>
       </el-tab-pane>
       <el-tab-pane label="订单">
         <el-table
@@ -37,12 +37,15 @@
 </template>
 <script>
 import PlaceOrder from './PlaceOrder'
+import {getRoomGoods} from '@/api/room.js'
 export default {
   components: {
     PlaceOrder
   },
   data () {
     return {
+      goods_type: {},
+      goods_data: [],
       tableData: [
         {
           date: '2016-05-02',
@@ -94,6 +97,18 @@ export default {
           address: '上海市普陀区金沙江路 1516 弄'
         }
       ]
+    }
+  },
+  created () {
+    this.getRoomGoodsForOrder()
+  },
+  methods: {
+    getRoomGoodsForOrder () {
+      getRoomGoods().then(response => {
+        console.log(response.data)
+        this.goods_type = response.data.goods_type
+        this.goods_data = response.data.data
+      })
     }
   }
 }
