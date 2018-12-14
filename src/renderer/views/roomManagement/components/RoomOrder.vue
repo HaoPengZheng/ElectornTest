@@ -1,8 +1,14 @@
 <template>
   <div class="room-order">
-    <el-tabs type="border-card" id="room-order-base-tabs">
+    <el-tabs
+      type="border-card"
+      id="room-order-base-tabs"
+    >
       <el-tab-pane label="下单">
-       <place-order :goodsType="goods_type" :goodsData="goods_data"></place-order>
+        <place-order
+          :goodsType="goods_type"
+          :goodsData="goods_data"
+        ></place-order>
       </el-tab-pane>
       <el-tab-pane label="订单">
         <el-table
@@ -12,11 +18,30 @@
           style="width: 100%"
           :default-sort="{prop: 'date', order: 'descending'}"
         >
-          <el-table-column prop="date" label="订单号" sortable width="180"></el-table-column>
-          <el-table-column prop="name" label="状态" sortable width="180"></el-table-column>
-          <el-table-column prop="address" label="手机"></el-table-column>
-          <el-table-column prop="address" label="总价"></el-table-column>
-          <el-table-column prop="address" label="创建时间"></el-table-column>
+          <el-table-column
+            prop="date"
+            label="订单号"
+            sortable
+            width="180"
+          ></el-table-column>
+          <el-table-column
+            prop="name"
+            label="状态"
+            sortable
+            width="180"
+          ></el-table-column>
+          <el-table-column
+            prop="address"
+            label="手机"
+          ></el-table-column>
+          <el-table-column
+            prop="address"
+            label="总价"
+          ></el-table-column>
+          <el-table-column
+            prop="address"
+            label="创建时间"
+          ></el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="日志">
@@ -37,7 +62,8 @@
 </template>
 <script>
 import PlaceOrder from './PlaceOrder'
-import {getRoomGoods} from '@/api/room.js'
+import { getRoomGoods } from '@/api/room.js'
+import { convertHanziToPinYin, convertHanZiToInitial } from '@/utils/pinyinUtils.js'
 export default {
   components: {
     PlaceOrder
@@ -105,9 +131,15 @@ export default {
   methods: {
     getRoomGoodsForOrder () {
       getRoomGoods().then(response => {
-        console.log(response.data)
         this.goods_type = response.data.goods_type
         this.goods_data = response.data.data
+        this.initPinYin()
+      })
+    },
+    initPinYin () {
+      this.goods_data.forEach(element => {
+        element.pinyin = convertHanziToPinYin(element.materials_name)
+        element.lyx = convertHanZiToInitial(element.materials_name)
       })
     }
   }
@@ -140,7 +172,7 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-#room-order-base-tabs{
+#room-order-base-tabs {
   height: 100%;
   padding-bottom: 10px;
 }
