@@ -9,22 +9,22 @@ const getters = {
 }
 const mutations = {
   Update_Room_Id (state, roomInfo) {
-    state.roomId = roomInfo
+    state.roomInfo = roomInfo
   },
   Increase_Product (state, product) {
-    console.log(state.orderProductList.hasOwnProperty(product.productName))
-    if (state.orderProductList.hasOwnProperty(product.productName)) {
-      Vue.set(state.orderProductList[product.productName], 'count', ++state.orderProductList[product.productName].count)
+    console.log(state.orderProductList.hasOwnProperty(product.materials_name))
+    if (state.orderProductList.hasOwnProperty(product.materials_name)) {
+      Vue.set(state.orderProductList[product.materials_name], 'count', ++state.orderProductList[product.materials_name].count)
     } else {
-      Vue.set(state.orderProductList, product.productName, product)
-      Vue.set(state.orderProductList[product.productName], 'count', 1)
+      Vue.set(state.orderProductList, product.materials_name, product)
+      Vue.set(state.orderProductList[product.materials_name], 'count', 1)
     }
   },
   Delete_Product (state, product) {
-    Vue.delete(state.orderProductList, product.productName)
+    Vue.delete(state.orderProductList, product.materials_name)
   },
   Update_Product_Count (state, product) {
-    Vue.set(state.orderProductList, product.productName, product)
+    Vue.set(state.orderProductList, product.materials_name, product)
   }
 }
 const actions = {

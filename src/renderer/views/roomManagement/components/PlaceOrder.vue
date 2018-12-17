@@ -72,6 +72,7 @@
         v-model="remark"
       ></el-input>
     </div>
+    <el-button @click="addRoomOrder">下单</el-button>
   </div>
 </template>
 <script>
@@ -79,14 +80,7 @@ import UnderLine from '@/components/UnderLine/UnderLine'
 import BaseProduct from './BaseProduct'
 import RoomOrderList from './RoomOrderList'
 import StringUtils from '@/utils/StringUtils'
-class Product {
-  constructor (productName, price, remain, quantifier) {
-    this.productName = productName
-    this.price = price
-    this.remain = remain
-    this.quantifier = quantifier
-  }
-}
+import { addRoomOrder } from '@/api/room'
 export default {
   components: {
     UnderLine,
@@ -111,12 +105,7 @@ export default {
       this.goodsData.forEach(element => {
         if (element.goodstype_name === type) {
           products.push(
-            new Product(
-              element.materials_name,
-              element.unit_price,
-              element.quantity,
-              element.unit
-            )
+            element
           )
         }
       })
@@ -137,6 +126,24 @@ export default {
       } else {
         return goodData.materials_name.indexOf(searchKey) !== -1
       }
+    },
+    addRoomOrder () {
+      let queryData = {}
+      let baseQueryLabel = 'order_detail'
+      let orderLabel = '[order]'
+      let orderProductList = this.$store.state.RoomPlaceOrder.orderProductList
+      for (let key in orderProductList) {
+        queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][goodsnum_id]`] = orderProductList[key].goodsnum_id
+        queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][quantity]`] = orderProductList[key].quantity
+        queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][warehouse_id]`] = orderProductList[key].warehouse_id
+        queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][materials_name]`] = orderProductList[key].materials_name
+        queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][warehouse_id]`] = orderProductList[key].warehouse_id
+        queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][unit]`] = orderProductList[key].unit
+      }
+      queryData[`${baseQueryLabel}[shop_id]`] = this.$store.getters.shop
+      queryData[`${baseQueryLabel}[remark]`] = this.remark
+      queryData[`${baseQueryLabel}[room_id]`] = this.$store.state.RoomPlaceOrder.roomInfo.room_id
+      addRoomOrder(queryData)
     }
   },
   computed: {
@@ -145,12 +152,7 @@ export default {
       this.goodsData.forEach(element => {
         if (this.isTargetForSearchKey(this.searchKey, element)) {
           searchProducts.push(
-            new Product(
-              element.materials_name,
-              element.unit_price,
-              element.quantity,
-              element.unit
-            )
+            element
           )
         }
       })

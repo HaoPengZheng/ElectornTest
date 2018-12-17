@@ -1,11 +1,11 @@
 <template>
   <div class="base-product" @click="addProduct">
     <div class="product-name">
-      {{productInfo.productName}}
+      {{productInfo.materials_name}}
     </div>
     <div class="product-price">
-      <span>{{productInfo.price}} / {{productInfo.quantifier}}</span>
-      <span>剩余{{productInfo.remain}}{{productInfo.quantifier}}</span>
+      <span>{{productInfo.unit_price}} / {{productInfo.unit}}</span>
+      <span>剩余{{productInfo.remain}}{{productInfo.quantity}}</span>
     </div>
   </div>
 </template>

@@ -26,8 +26,11 @@ export function convertHanziToPinYin (Hanzi) {
  */
 export function convertHanZiToInitial (Hanzi) {
   let result = ''
-  pinyin(Hanzi, {style: pinyin.STYLE_INITIALS}).forEach(ele => {
-    result += ele.toString().charAt(0)
-  })
+  Hanzi = Hanzi.trim()
+  if (typeof Hanzi === 'string' && Hanzi !== '') {
+    pinyin(Hanzi, {style: pinyin.STYLE_INITIALS}).forEach(ele => {
+      result += ele.toString().charAt(0)
+    })
+  }
   return result
 }

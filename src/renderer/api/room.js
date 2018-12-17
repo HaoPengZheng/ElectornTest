@@ -72,3 +72,15 @@ export function getRoomGoods () {
     })
   })
 }
+
+// 客房服务下单
+export function addRoomOrder (data) {
+  return new Promise(function (resolve, reject) {
+    axios.post('http://192.168.101.128/oqc/index.php/66/?app=api&mod=RoomService&act=addRoomOrder', data).then(resp => {
+      console.log(resp)
+      resolve(resp)
+    }).catch(err => {
+      reject(err)
+    })
+  })
+}

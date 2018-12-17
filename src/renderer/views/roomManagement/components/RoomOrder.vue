@@ -4,7 +4,7 @@
       type="border-card"
       id="room-order-base-tabs"
     >
-      <el-tab-pane label="下单">
+      <el-tab-pane :label="`下单(房间:${getRoomInfo.room_num})`">
         <place-order
           :goodsType="goods_type"
           :goodsData="goods_data"
@@ -141,6 +141,11 @@ export default {
         element.pinyin = convertHanziToPinYin(element.materials_name)
         element.lyx = convertHanZiToInitial(element.materials_name)
       })
+    }
+  },
+  computed: {
+    getRoomInfo () {
+      return this.$store.state.RoomPlaceOrder.roomInfo
     }
   }
 }
