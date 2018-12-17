@@ -12,36 +12,53 @@
       </el-tab-pane>
       <el-tab-pane label="订单">
         <el-table
-          :data="tableData"
+          :data="getOrderListByRoomId"
           border
           stripe
           style="width: 100%"
           :default-sort="{prop: 'date', order: 'descending'}"
         >
           <el-table-column
-            prop="date"
+            prop="warehouse_no"
             label="订单号"
             sortable
             width="180"
           ></el-table-column>
           <el-table-column
-            prop="name"
+            prop="state"
             label="状态"
             sortable
             width="180"
           ></el-table-column>
           <el-table-column
-            prop="address"
+            prop="phone"
             label="手机"
           ></el-table-column>
           <el-table-column
-            prop="address"
+            prop="total"
             label="总价"
           ></el-table-column>
           <el-table-column
-            prop="address"
+            prop="ctime"
             label="创建时间"
           ></el-table-column>
+          <el-table-column
+            fixed="right"
+            label="操作"
+            width="200"
+          >
+            <template slot-scope="scope">
+              <el-button
+                @click="showDetail(scope.row)"
+                size="small"
+              >查看</el-button>
+              <el-button
+                type="primary"
+                size="small"
+                @click="cancelRoomOrder(scope.row)"
+              >取消订单</el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="日志">
@@ -58,11 +75,40 @@
         </table>
       </el-tab-pane>
     </el-tabs>
+    <el-dialog
+      title="订单详情"
+      :visible.sync="orderDetailDialogVisible"
+      width="50%"
+      append-to-body
+    >
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <td style="background:#f2f2f2;height: 25px;padding: 5px 10px;border: 1px solid #e6e6e6;font-weight: bold;text-align: center;">订单号</td>
+            <td>{{detailOrder.warehouse_no}}</td>
+            <td style="background:#f2f2f2;height: 25px;padding: 5px 10px;border: 1px solid #e6e6e6;font-weight: bold;text-align: center;">创建时间</td>
+            <td>{{detailOrder.ctime}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table table-bordered  table-hover">
+        <tbody>
+          <tr>
+            <td class="td_head">商品名</td>
+            <td class="td_head">数量</td>
+          </tr>
+          <tr>
+            <td>扑克</td>
+            <td>1 / 个</td>
+          </tr>
+        </tbody>
+      </table>
+    </el-dialog>
   </div>
 </template>
 <script>
 import PlaceOrder from './PlaceOrder'
-import { getRoomGoods } from '@/api/room.js'
+import { getRoomGoods, getOrderByShop, cancelRoomOrder, getOrderDetail } from '@/api/room.js'
 import { convertHanziToPinYin, convertHanZiToInitial } from '@/utils/pinyinUtils.js'
 export default {
   components: {
@@ -122,11 +168,14 @@ export default {
           name: '王小虎',
           address: '上海市普陀区金沙江路 1516 弄'
         }
-      ]
+      ],
+      orderDetailDialogVisible: false,
+      detailOrder: {}
     }
   },
   created () {
     this.getRoomGoodsForOrder()
+    this.getOrderList()
   },
   methods: {
     getRoomGoodsForOrder () {
@@ -141,11 +190,46 @@ export default {
         element.pinyin = convertHanziToPinYin(element.materials_name)
         element.lyx = convertHanZiToInitial(element.materials_name)
       })
+    },
+    getOrderList () {
+      getOrderByShop().then(response => {
+        this.$store.dispatch('initOrderListByShop', response.data)
+      })
+    },
+    showDetail (data) {
+      this.detailOrder = data
+      let query = {order_no: data.warehouse_no}
+      console.log(query)
+      getOrderDetail(query)
+      this.orderDetailDialogVisible = true
+    },
+    cancelRoomOrder (data) {
+      let query = {order_no: data.warehouse_no}
+      cancelRoomOrder(query).then(response => {
+        console.log(response)
+      })
     }
   },
   computed: {
     getRoomInfo () {
       return this.$store.state.RoomPlaceOrder.roomInfo
+    },
+    getAllOrderListByShop () {
+      return this.$store.state.RoomPlaceOrder.orderListByShop
+    },
+    getOrderListByRoomId () {
+      let orderList = []
+      let allOrderList = this.$store.state.RoomPlaceOrder.orderListByShop
+      let roomInfo = this.$store.state.RoomPlaceOrder.roomInfo
+      if (roomInfo === undefined) {
+        return
+      }
+      allOrderList.forEach(order => {
+        if (order.room_id === roomInfo.room_id) {
+          orderList.push(order)
+        }
+      })
+      return orderList
     }
   }
 }

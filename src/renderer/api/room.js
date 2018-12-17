@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 import axios from 'axios'
+import qs from 'qs'
 
 // 获取房态列表
 export function getRoomSurplus (query) {
@@ -76,9 +77,40 @@ export function getRoomGoods () {
 // 客房服务下单
 export function addRoomOrder (data) {
   return new Promise(function (resolve, reject) {
-    axios.post('http://192.168.101.128/oqc/index.php/66/?app=api&mod=RoomService&act=addRoomOrder', data).then(resp => {
-      console.log(resp)
+    axios.post('http://192.168.101.128/oqc/index.php/66/?app=api&mod=RoomService&act=addRoomOrder', qs.stringify(data)).then(resp => {
       resolve(resp)
+    }).catch(err => {
+      reject(err)
+    })
+  })
+}
+
+// 获取房间的下单信息
+export function getOrderByShop () {
+  return new Promise(function (resolve, reject) {
+    axios.get('http://192.168.101.128/oqc/index.php/66/?app=api&mod=RoomService&act=getOrderByShop&shop_id=49&company_id=66&employee_id=70777').then(resp => {
+      resolve(resp)
+    }).catch(err => {
+      reject(err)
+    })
+  })
+}
+
+// 客房服务取消订单
+export function cancelRoomOrder (data) {
+  return new Promise(function (resolve, reject) {
+    axios.post('http://192.168.101.128/oqc/index.php/66?app=api&mod=RoomService&act=cancelRoomOrder', qs.stringify(data)).then(response => {
+      resolve(response)
+    }).catch(err => {
+      reject(err)
+    })
+  })
+}
+
+export function getOrderDetail (data) {
+  return new Promise(function (resolve, reject) {
+    axios.post('http://192.168.101.128/oqc/index.php/66?app=api&mod=RoomService&act=getOrderDetail', qs.stringify(data)).then(response => {
+      resolve(response)
     }).catch(err => {
       reject(err)
     })

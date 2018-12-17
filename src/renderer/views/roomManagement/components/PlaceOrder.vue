@@ -143,7 +143,24 @@ export default {
       queryData[`${baseQueryLabel}[shop_id]`] = this.$store.getters.shop
       queryData[`${baseQueryLabel}[remark]`] = this.remark
       queryData[`${baseQueryLabel}[room_id]`] = this.$store.state.RoomPlaceOrder.roomInfo.room_id
-      addRoomOrder(queryData)
+      console.log(queryData)
+      addRoomOrder(queryData).then(response => {
+        if (!response.data.status) {
+          this.$message({
+            showClose: true,
+            message: response.data.data,
+            type: 'warning'
+          })
+        } else {
+          this.$message({
+            showClose: true,
+            message: response.data.data,
+            type: 'success'
+          })
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     }
   },
   computed: {

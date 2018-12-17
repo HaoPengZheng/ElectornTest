@@ -11,12 +11,15 @@ import './icons/iconfont.css'
 // 引入vuescroll滚动条
 import vuescroll from 'vuescroll'
 import ops from '@/utils/scrollOptions.js'
+import qs from 'qs'
 import 'vuescroll/dist/vuescroll.css'
 import './notification'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.use(ElementUI)
 Vue.use(vuescroll, {ops: ops, name: 'vueScroll'})
+Vue.$qs = qs
+
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
