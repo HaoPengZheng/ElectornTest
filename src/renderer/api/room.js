@@ -117,3 +117,14 @@ export function getOrderDetail (data) {
     })
   })
 }
+
+// 客房服务订单日志
+export function getRoomLog () {
+  return new Promise(function (resolve, reject) {
+    axios.get('http://192.168.101.128/oqc/index.php/66/?app=api&mod=RoomService&act=getRoomLog&shop_id=49&company_id=66&employee_id=70777').then(response => {
+      resolve(response)
+    }).catch(err => {
+      reject(err)
+    })
+  })
+}

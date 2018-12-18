@@ -3,7 +3,8 @@ import { Message } from 'element-ui'
 const state = {
   roomInfo: Object,
   orderProductList: {},
-  orderListByShop: []
+  orderListByShop: [],
+  orderLogList: []
 }
 const getters = {
 
@@ -34,6 +35,9 @@ const mutations = {
   },
   Init_Order_List_By_Shop (state, orderList) {
     state.orderListByShop = orderList.slice()
+  },
+  Init_Order_Log_list (state, logList) {
+    state.orderLogList = logList
   }
 }
 const actions = {
@@ -56,6 +60,9 @@ const actions = {
   },
   initOrderListByShop ({commit}, orderList) {
     commit('Init_Order_List_By_Shop', orderList)
+  },
+  initOrderLogList ({commit}, logList) {
+    commit('Init_Order_Log_list', logList)
   }
 }
 export default {

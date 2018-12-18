@@ -62,14 +62,18 @@
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="日志">
-        <table class="room-detail-table table table-bordered table-hover">
+        <table class="room-detail-table table table-bordered table-hover" style="margin-top:20px">
           <tbody>
             <tr class="active">
               <td>消息</td>
               <td>时间</td>
             </tr>
             <tr>
-              <td colspan="2">无数据</td>
+              <td colspan="2" v-show="getRoomLogByRoomId.length===0">暂无数据</td>
+            </tr>
+            <tr v-for="(log,index) in getRoomLogByRoomId" :key="index">
+              <td>{{log.data}}</td>
+              <td>{{log.time}}</td>
             </tr>
           </tbody>
         </table>
@@ -108,7 +112,7 @@
 </template>
 <script>
 import PlaceOrder from './PlaceOrder'
-import { getRoomGoods, getOrderByShop, cancelRoomOrder, getOrderDetail } from '@/api/room.js'
+import { getRoomGoods, getOrderByShop, cancelRoomOrder, getOrderDetail, getRoomLog } from '@/api/room.js'
 import { convertHanziToPinYin, convertHanZiToInitial } from '@/utils/pinyinUtils.js'
 export default {
   components: {
@@ -126,6 +130,7 @@ export default {
   created () {
     this.getRoomGoodsForOrder()
     this.getOrderList()
+    this.getRoomOrderLogList()
   },
   methods: {
     getRoomGoodsForOrder () {
@@ -144,6 +149,11 @@ export default {
     getOrderList () {
       getOrderByShop().then(response => {
         this.$store.dispatch('initOrderListByShop', response.data)
+      })
+    },
+    getRoomOrderLogList () {
+      getRoomLog().then(response => {
+        this.$store.dispatch('initOrderLogList', response.data)
       })
     },
     showDetail (data) {
@@ -180,6 +190,20 @@ export default {
         }
       })
       return orderList
+    },
+    getRoomLogByRoomId () {
+      let logList = []
+      let allLogList = this.$store.state.RoomPlaceOrder.orderLogList
+      let roomInfo = this.getRoomInfo
+      if (roomInfo === undefined || allLogList === undefined) {
+        return
+      }
+      allLogList.forEach(log => {
+        if (log.room_id === roomInfo.room_id) {
+          logList.push(log)
+        }
+      })
+      return logList
     }
   }
 }
