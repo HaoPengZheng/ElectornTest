@@ -63,16 +63,18 @@
     </under-line>
     <div
       class="mg-top-20 mg-bottom-10"
-      style="min-height:150px;"
+      style="min-height:100px;"
     >
       <el-input
         type="textarea"
-        :rows="2"
+        :rows="4"
         placeholder="请输入内容"
         v-model="remark"
       ></el-input>
     </div>
-    <el-button @click="addRoomOrder">下单</el-button>
+    <div class="place-order-footer">
+      <el-button type="danger"  @click="addRoomOrder">下单</el-button>
+    </div>
   </div>
 </template>
 <script>
@@ -131,7 +133,8 @@ export default {
       let queryData = {}
       let baseQueryLabel = 'order_detail'
       let orderLabel = '[order]'
-      let orderProductList = this.$store.state.RoomPlaceOrder.orderProductList
+      let roomId = this.$store.state.RoomPlaceOrder.roomInfo.room_id
+      let orderProductList = this.$store.state.RoomPlaceOrder.orderProductList[roomId]
       for (let key in orderProductList) {
         queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][goodsnum_id]`] = orderProductList[key].goodsnum_id
         queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][quantity]`] = orderProductList[key].quantity
@@ -205,5 +208,10 @@ export default {
 .delivery {
   display: flex;
   justify-content: flex-start;
+}
+.place-order-footer{
+  display:flex;
+  justify-content: flex-end;
+  margin-bottom:20px;
 }
 </style>
