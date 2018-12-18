@@ -97,9 +97,9 @@
             <td class="td_head">商品名</td>
             <td class="td_head">数量</td>
           </tr>
-          <tr>
-            <td>扑克</td>
-            <td>1 / 个</td>
+          <tr v-for="(product,index) in detailOrderInfo" :key="index">
+            <td>{{product.materials_name}}</td>
+            <td>{{product.quantity}}/{{product.unit}}</td>
           </tr>
         </tbody>
       </table>
@@ -118,59 +118,9 @@ export default {
     return {
       goods_type: {},
       goods_data: [],
-      tableData: [
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }
-      ],
       orderDetailDialogVisible: false,
-      detailOrder: {}
+      detailOrder: {},
+      detailOrderInfo: []
     }
   },
   created () {
@@ -200,7 +150,7 @@ export default {
       this.detailOrder = data
       let query = {order_no: data.warehouse_no}
       getOrderDetail(query).then(response => {
-        console.log(response)
+        this.detailOrderInfo = response.data
       })
       this.orderDetailDialogVisible = true
     },
