@@ -143,7 +143,6 @@ export default {
       queryData[`${baseQueryLabel}[shop_id]`] = this.$store.getters.shop
       queryData[`${baseQueryLabel}[remark]`] = this.remark
       queryData[`${baseQueryLabel}[room_id]`] = this.$store.state.RoomPlaceOrder.roomInfo.room_id
-      console.log(queryData)
       addRoomOrder(queryData).then(response => {
         if (!response.data.status) {
           this.$message({

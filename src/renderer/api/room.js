@@ -107,6 +107,7 @@ export function cancelRoomOrder (data) {
   })
 }
 
+// 客房服务订单详情
 export function getOrderDetail (data) {
   return new Promise(function (resolve, reject) {
     axios.post('http://192.168.101.128/oqc/index.php/66?app=api&mod=RoomService&act=getOrderDetail', qs.stringify(data)).then(response => {

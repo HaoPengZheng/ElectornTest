@@ -199,14 +199,14 @@ export default {
     showDetail (data) {
       this.detailOrder = data
       let query = {order_no: data.warehouse_no}
-      console.log(query)
-      getOrderDetail(query)
+      getOrderDetail(query).then(response => {
+        console.log(response)
+      })
       this.orderDetailDialogVisible = true
     },
     cancelRoomOrder (data) {
       let query = {order_no: data.warehouse_no}
       cancelRoomOrder(query).then(response => {
-        console.log(response)
       })
     }
   },
@@ -221,7 +221,7 @@ export default {
       let orderList = []
       let allOrderList = this.$store.state.RoomPlaceOrder.orderListByShop
       let roomInfo = this.$store.state.RoomPlaceOrder.roomInfo
-      if (roomInfo === undefined) {
+      if (roomInfo === undefined || allOrderList === undefined) {
         return
       }
       allOrderList.forEach(order => {

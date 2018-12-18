@@ -2,7 +2,8 @@ import Vue from 'vue'
 import { Message } from 'element-ui'
 const state = {
   roomInfo: Object,
-  orderProductList: {}
+  orderProductList: {},
+  orderListByShop: []
 }
 const getters = {
 
@@ -12,19 +13,27 @@ const mutations = {
     state.roomInfo = roomInfo
   },
   Increase_Product (state, product) {
-    console.log(state.orderProductList.hasOwnProperty(product.materials_name))
-    if (state.orderProductList.hasOwnProperty(product.materials_name)) {
-      Vue.set(state.orderProductList[product.materials_name], 'count', ++state.orderProductList[product.materials_name].count)
+    let roomId = state.roomInfo.room_id
+    if (!state.orderProductList.hasOwnProperty(roomId)) {
+      Vue.set(state.orderProductList, roomId, {})
+    }
+    if (state.orderProductList[roomId].hasOwnProperty(product.materials_name)) {
+      Vue.set(state.orderProductList[roomId][product.materials_name], 'count', ++state.orderProductList[roomId][product.materials_name].count)
     } else {
-      Vue.set(state.orderProductList, product.materials_name, product)
-      Vue.set(state.orderProductList[product.materials_name], 'count', 1)
+      Vue.set(state.orderProductList[roomId], product.materials_name, product)
+      Vue.set(state.orderProductList[roomId][product.materials_name], 'count', 1)
     }
   },
   Delete_Product (state, product) {
-    Vue.delete(state.orderProductList, product.materials_name)
+    let roomId = state.roomInfo.room_id
+    Vue.delete(state.orderProductList[roomId], product.materials_name)
   },
   Update_Product_Count (state, product) {
-    Vue.set(state.orderProductList, product.materials_name, product)
+    let roomId = state.roomInfo.room_id
+    Vue.set(state.orderProductList[roomId], product.materials_name, product)
+  },
+  Init_Order_List_By_Shop (state, orderList) {
+    state.orderListByShop = orderList.slice()
   }
 }
 const actions = {
@@ -44,6 +53,9 @@ const actions = {
   },
   updateProductCount ({commit}, product) {
     commit('Update_Product_Count', product)
+  },
+  initOrderListByShop ({commit}, orderList) {
+    commit('Init_Order_List_By_Shop', orderList)
   }
 }
 export default {
