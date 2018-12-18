@@ -5,7 +5,7 @@
     </div>
     <div class="product-price">
       <span>{{productInfo.unit_price}} / {{productInfo.unit}}</span>
-      <span>剩余{{productInfo.remain}}{{productInfo.quantity}}</span>
+      <span>剩余{{productInfo.quantity}}</span>
     </div>
   </div>
 </template>
@@ -20,7 +20,18 @@ export default {
   },
   methods: {
     addProduct () {
+      if (this.productInfo.quantity <= 0) {
+        this.showUnderStockMsg()
+        return
+      }
       this.$store.dispatch('increaseProduct', this.productInfo)
+    },
+    showUnderStockMsg () {
+      this.$message({
+        showClose: true,
+        message: this.productInfo.materials_name + '库存不足',
+        type: 'warning'
+      })
     }
   }
 }

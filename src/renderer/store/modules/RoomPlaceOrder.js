@@ -19,6 +19,14 @@ const mutations = {
       Vue.set(state.orderProductList, roomId, {})
     }
     if (state.orderProductList[roomId].hasOwnProperty(product.materials_name)) {
+      if (state.orderProductList[roomId][product.materials_name].count === product.quantity) {
+        Message({
+          showClose: true,
+          message: product.materials_name + '已达到库存上限了',
+          type: 'warning',
+          duration: 1 * 1000
+        })
+      }
       Vue.set(state.orderProductList[roomId][product.materials_name], 'count', ++state.orderProductList[roomId][product.materials_name].count)
     } else {
       Vue.set(state.orderProductList[roomId], product.materials_name, product)
@@ -38,6 +46,10 @@ const mutations = {
   },
   Init_Order_Log_list (state, logList) {
     state.orderLogList = logList
+  },
+  Clean_Order_List (state) {
+    let roomId = state.roomInfo.room_id
+    Vue.set(state.orderProductList, roomId, {})
   }
 }
 const actions = {
@@ -57,6 +69,9 @@ const actions = {
   },
   updateProductCount ({commit}, product) {
     commit('Update_Product_Count', product)
+  },
+  cleanOrderList ({commit}) {
+    commit('Clean_Order_List')
   },
   initOrderListByShop ({commit}, orderList) {
     commit('Init_Order_List_By_Shop', orderList)

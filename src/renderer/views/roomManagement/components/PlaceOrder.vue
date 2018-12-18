@@ -137,12 +137,13 @@ export default {
       let orderProductList = this.$store.state.RoomPlaceOrder.orderProductList[roomId]
       for (let key in orderProductList) {
         queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][goodsnum_id]`] = orderProductList[key].goodsnum_id
-        queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][quantity]`] = orderProductList[key].quantity
+        queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][quantity]`] = orderProductList[key].count
         queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][warehouse_id]`] = orderProductList[key].warehouse_id
         queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][materials_name]`] = orderProductList[key].materials_name
         queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][warehouse_id]`] = orderProductList[key].warehouse_id
         queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][unit]`] = orderProductList[key].unit
       }
+      queryData[`${baseQueryLabel}[is_allow]`] = this.isDeliveryWhenAbsent
       queryData[`${baseQueryLabel}[shop_id]`] = this.$store.getters.shop
       queryData[`${baseQueryLabel}[remark]`] = this.remark
       queryData[`${baseQueryLabel}[room_id]`] = this.$store.state.RoomPlaceOrder.roomInfo.room_id
@@ -159,6 +160,8 @@ export default {
             message: response.data.data,
             type: 'success'
           })
+          this.$store.dispatch('cleanOrderList')
+          this.$emit('refreshData')
         }
       }).catch(err => {
         console.log(err)

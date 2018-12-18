@@ -8,6 +8,7 @@
         <place-order
           :goodsType="goods_type"
           :goodsData="goods_data"
+          @refreshData="refreshData"
         ></place-order>
       </el-tab-pane>
       <el-tab-pane label="订单">
@@ -133,6 +134,11 @@ export default {
     this.getRoomOrderLogList()
   },
   methods: {
+    refreshData () {
+      this.getRoomGoodsForOrder()
+      this.getOrderList()
+      this.getRoomOrderLogList()
+    },
     getRoomGoodsForOrder () {
       getRoomGoods().then(response => {
         this.goods_type = response.data.goods_type
