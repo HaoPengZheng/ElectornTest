@@ -29,10 +29,9 @@
     <div class="room-context-menu" :style="{top:contextOffsetY+'px',left:contextOffsetX+'px'}">
       <ul>
         <li @click="cleanRoom">住房清洁</li>
-        <li @click="checkOut">退房</li>
-        <li @click="cleanComplete">清洁完成</li>
+        <li @click="placeOrder">客房服务</li>
         <li @click="checkIn">入住</li>
-        <li @click="placeOrder">下单</li>
+        <li @click="checkOut">退房</li>
       </ul>
     </div>
   </div>
