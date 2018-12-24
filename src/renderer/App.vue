@@ -5,9 +5,15 @@
 </template>
 
 <script>
-  export default {
-    name: 'my-project'
+import {ipcRenderer} from 'electron'
+export default {
+  name: 'my-project',
+  created () {
+    ipcRenderer.on('load', (event, arg) => {
+      this.$router.push('/reception-assistant')
+    })
   }
+}
 </script>
 
 <style>

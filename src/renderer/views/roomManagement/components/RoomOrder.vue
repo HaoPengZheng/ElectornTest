@@ -4,7 +4,7 @@
       type="border-card"
       id="room-order-base-tabs"
     >
-      <el-tab-pane :label="`客房服务(房间:${getRoomInfo.room_num})`">
+      <el-tab-pane :label="`客房服务                                              (房间:${getRoomInfo.room_num})`">
         <place-order
           :goodsType="goods_type"
           :goodsData="goods_data"

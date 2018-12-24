@@ -1,5 +1,5 @@
 <template>
-  <div class="base-room" :style="roomBackgorundStyle" :id="`room${getRoomInfo.room_num}`" :class="roomTypeClass" @click="showDetail" @mouseleave="hiddenContextMenu" @contextmenu="showContextMenu">
+  <div class="base-room" :style="roomBackgorundStyle" :id="`room${getRoomInfo.room_num}`" :class="roomTypeClass" @click="handleClick" @mouseleave="hiddenContextMenu" @contextmenu="showContextMenu">
     <div class="room-attribute" :class="{emphasize:isAnchorRoomNum}">
       <div class="attribute-style">
         <span class="room-number">{{getRoomInfo.room_num}}</span>
@@ -95,6 +95,9 @@ export default {
     }
   },
   methods: {
+    handleClick () {
+      this.showDetail()
+    },
     showContextMenu: function (e) {
       this.isShowContextMenu = true
       this.contextOffsetX = e.clientX
@@ -125,7 +128,7 @@ export default {
       e.stopPropagation()
       let roomId = []
       roomId.push(this.getRoomInfo.room_num)
-      checkIn({'room_id': roomId}).then(response => {
+      checkIn({'room_num': roomId}).then(response => {
         const h = this.$createElement
         let type = response.data.status === 'false' ? 'error' : 'success'
         let title = response.data.status === 'false' ? '操作失败' : '操作成功'

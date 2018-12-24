@@ -6,16 +6,27 @@
       </svg>
     </div>
     <div class="nav-bar-right">
-        <user-setting></user-setting>
+      <el-button type="danger" @click="showReceptionHelper">前台助手</el-button>
+      <user-setting></user-setting>
     </div>
   </div>
 </template>
 <script>
 import UserSetting from './UserSetting'
+import {ipcRenderer} from 'electron'
 export default {
   name: 'nav-bar',
   components: {
     UserSetting
+  },
+  methods: {
+    showReceptionHelper () {
+      ipcRenderer.send('createReceptionHelper')
+      ipcRenderer.on('receptionHelperReply', (event, args) => {
+        console.log(args)
+        ipcRenderer.sendTo(args, 'load', true)
+      })
+    }
   }
 }
 </script>

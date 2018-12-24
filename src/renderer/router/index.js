@@ -7,6 +7,9 @@ import RoomSurplus from '../views/roomSurplus/RoomSurplus'
 import ChooseRoom from '../views/chooseRoom/ChooseRoom'
 import OrderPage from '../views/orderPage/OrderPage'
 import RoomAccountManagement from '../views/roomAccountManagement/RoomAccountManagement'
+import ReceptionAssistant from '../views/receptionAssistant/ReceptionAssistant'
+import CallAssistant from '../views/receptionAssistant/components/CallAssistant'
+import WakeupAssistant from '../views/receptionAssistant/components/WakeupAssistant'
 Vue.use(Router)
 
 export default new Router({
@@ -19,6 +22,26 @@ export default new Router({
       path: '/',
       name: 'landing-page',
       component: LandingPage
+    },
+    {
+      path: '/reception-assistant',
+      name: 'reception-assistant',
+      component: ReceptionAssistant,
+      children: [
+        {
+          path: '/reception-assistant/',
+          name: 'call-assistant',
+          component: CallAssistant
+        },
+        {
+          path: '/reception-assistant/call',
+          name: 'call-assistant',
+          component: CallAssistant
+        }, {
+          path: '/reception-assistant/wakeup',
+          name: 'wakeup-assistant',
+          component: WakeupAssistant
+        }]
     },
     {
       path: '/hotal-management',
