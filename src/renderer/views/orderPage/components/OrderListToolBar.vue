@@ -26,7 +26,7 @@
           <el-form-item label="入住时间:">
             <div style="width:125px">
               <el-date-picker
-                v-model="baseSearchModel.user_time"
+                v-model="baseSearchModel.use_time"
                 type="date"
                 placeholder="选择日期"
                 size="mini"
@@ -177,7 +177,7 @@ export default {
         no: '',
         customer: '',
         phone: '',
-        user_time: getNowFormatDate()
+        use_time: getNowFormatDate()
       },
       moreSearchModel: {
         goodName: '',
@@ -239,8 +239,8 @@ export default {
           query[key] = this.baseSearchModel[key]
         }
       }
-      if (query.hasOwnProperty('user_time')) {
-        query.user_time = dateStringToDateNum(query.user_time)
+      if (query.hasOwnProperty('use_time')) {
+        query.use_time = dateStringToDateNum(query.use_time)
       }
       this.getOrdersByQuery(query)
     },
@@ -263,7 +263,7 @@ export default {
         no: '',
         customer: '',
         phone: '',
-        user_time: ''
+        use_time: ''
       }
     }
   },

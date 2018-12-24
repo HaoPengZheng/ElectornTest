@@ -50,8 +50,19 @@
           <el-tag type="danger">未处理</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="address" label="操作"></el-table-column>
+      <el-table-column prop="address" label="操作" width="200px">
+        <template slot-scope="scope">
+          <el-button type="text" @click="settleAccounts">结账</el-button>
+        </template>
+      </el-table-column>
     </el-table>
+    <el-dialog
+      title="请选择结账方式"
+      :visible.sync="settleAccountsDialogVisible"
+      width="30%"
+      :before-close="handleClose">
+      <span>这是一段信息</span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -64,7 +75,8 @@ export default {
   },
   data () {
     return {
-      OrderListHelper: OrderListHelper
+      OrderListHelper: OrderListHelper,
+      settleAccountsDialogVisible: false
     }
   },
   methods: {
@@ -78,6 +90,9 @@ export default {
       }
       name += `(${detail.use_time})*${detail.quantity}`
       return name
+    },
+    settleAccounts () {
+      this.settleAccountsDialogVisible = true
     }
   },
   computed: {
