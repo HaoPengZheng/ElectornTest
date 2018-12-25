@@ -52,6 +52,7 @@
       </el-table-column>
       <el-table-column prop="address" label="操作" width="200px">
         <template slot-scope="scope">
+          <el-button type="text" @click="viewsDetail">查看详情</el-button>
           <el-button type="text" @click="settleAccounts">结账</el-button>
         </template>
       </el-table-column>
@@ -60,8 +61,21 @@
       title="请选择结账方式"
       :visible.sync="settleAccountsDialogVisible"
       width="40%"
-      :before-close="handleClose">
+      >
       <settle-account></settle-account>
+    </el-dialog>
+    <el-dialog
+      title="订单"
+      :visible.sync="viewsDetailDialogVisible"
+      width="50%"
+      >
+      <order-detail></order-detail>
+      <div class="footer">
+        <el-button size="mini" type="danger">关闭</el-button>
+        <el-button size="mini" type="primary">结账</el-button>
+        <el-button size="mini" type="primary">编辑</el-button>
+        <el-button size="mini" type="primary">处理</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -69,16 +83,19 @@
 import OrderListToolBar from './OrderListToolBar'
 import OrderListHelper from './OrderListHelper'
 import SettleAccount from './SettleAccount'
+import OrderDetail from './OrderDetail'
 export default {
   name: 'order-list',
   components: {
     OrderListToolBar,
-    SettleAccount
+    SettleAccount,
+    OrderDetail
   },
   data () {
     return {
       OrderListHelper: OrderListHelper,
-      settleAccountsDialogVisible: false
+      settleAccountsDialogVisible: false,
+      viewsDetailDialogVisible: false
     }
   },
   methods: {
@@ -95,6 +112,9 @@ export default {
     },
     settleAccounts () {
       this.settleAccountsDialogVisible = true
+    },
+    viewsDetail () {
+      this.viewsDetailDialogVisible = true
     }
   },
   computed: {

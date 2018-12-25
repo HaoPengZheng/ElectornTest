@@ -196,8 +196,6 @@
       </el-form>
       <el-button type="success" size="small">结账</el-button>
     </div>
-    <div>
-    </div>
   </div>
 </template>
 <script>
