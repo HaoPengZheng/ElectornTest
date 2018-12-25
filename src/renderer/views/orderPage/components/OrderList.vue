@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="order-list">
     <order-list-tool-bar></order-list-tool-bar>
     <el-table
       v-loading="isOrderTableLoading"
@@ -59,19 +59,21 @@
     <el-dialog
       title="请选择结账方式"
       :visible.sync="settleAccountsDialogVisible"
-      width="30%"
+      width="40%"
       :before-close="handleClose">
-      <span>这是一段信息</span>
+      <settle-account></settle-account>
     </el-dialog>
   </div>
 </template>
 <script>
 import OrderListToolBar from './OrderListToolBar'
 import OrderListHelper from './OrderListHelper'
+import SettleAccount from './SettleAccount'
 export default {
   name: 'order-list',
   components: {
-    OrderListToolBar
+    OrderListToolBar,
+    SettleAccount
   },
   data () {
     return {
@@ -113,3 +115,12 @@ export default {
 }
 </script>
 
+<style lang="scss">
+.order-list {
+  .el-dialog__title{
+    line-height: 24px;
+    font-size: 16px!important;
+    color: #303133;
+  }
+}
+</style>
