@@ -4,13 +4,13 @@
       <table class="t table table-bordered table-hover table_info">
         <tbody>
           <tr class="table_info_tr">
-            <td><span class="info_name">订单号:</span>66666618122403001</td>
-            <td><span class="info_name">订购人:</span>黄瑞麟</td>
-            <td><span class="info_name">电话:</span>13631231363</td>
+            <td><span class="info_name">订单号:</span>{{order_no}}</td>
+            <td><span class="info_name">订购人:</span>{{detailData.customer}}</td>
+            <td><span class="info_name">电话:</span>{{detailData.phone}}</td>
           </tr>
           <tr class="table_info_tr">
-            <td><span class="info_name">支付方式:</span>微信公众号</td>
-            <td><span class="info_name">订单类型:</span>普通下单</td>
+            <td><span class="info_name">支付方式:</span>{{detailData.pay_type}}</td>
+            <td><span class="info_name">订单类型:</span>{{detailData.order_type}}</td>
             <td><span class="info_name">创建时间:</span>2018-12-24 13:56:25</td>
           </tr>
         </tbody>
@@ -24,13 +24,17 @@
             <td class="td_title">小计</td>
             <td class="td_title">房间号</td>
           </tr>
-
-          <tr>
-            <td>大餐庙会2人上房套票</td>
-            <td>1</td>
-            <td>2018-12-24</td>
-            <td>2300.00</td>
-            <td>178</td>
+          <tr v-if="detailData.detail.length===0">
+            <td colspan="5">
+              暂无数据
+            </td>
+          </tr>
+          <tr v-for="(detail,index) in detailData.detail" :key="index">
+            <td>{{detail.name}}</td>
+            <td>{{detail.quantity}}</td>
+            <td>{{detail.use_time}}</td>
+            <td>{{detail.price}}</td>
+            <td>{{detail.roomNos}}</td>
           </tr>
         </tbody>
       </table>
@@ -63,10 +67,10 @@
             <td class="td_title">身份证号</td>
           </tr>
 
-          <tr>
-            <td>柯天灼</td>
-            <td>15999919874</td>
-            <td></td>
+          <tr v-for="(contact,index) in detailData.contacts" :key="index">
+            <td>{{contact.contact_name}}</td>
+            <td>{{contact.contact_phone}}</td>
+            <td>{{contact.contact_id_card}}</td>
             <td></td>
           </tr>
 
@@ -125,7 +129,7 @@
         <div>
           <div>
             <el-checkbox-group
-              v-model="remarkList"
+              v-model="remarkSelect"
               size="small"
             >
               <el-checkbox
@@ -155,23 +159,92 @@
   </div>
 </template>
 <script>
+import {getOrderDetail} from '@/api/order'
+import {dateStringToDateNum} from '@/utils/date'
 export default {
+  props: {
+    orderNo: String
+  },
   data () {
     return {
       backendRemarkDialogVisible: false,
-      remarkList: [],
+      remarkSelect: [],
       remarkOptions: ['散客', 'L类保密', '尊尚', '加1童', '大床', '非吸烟', '送单车', '送单车及千色', '双床', '相连房', '高楼层', '送千色', '时光邮驿'],
-      colorList: []
+      colorList: [],
+      order_no: this.orderNo,
+      detailData: {
+        customer: '',
+        phone: '',
+        pay_type: '',
+        order_type: '',
+        ctime: '',
+        detail: [],
+        payed_sum: '',
+        contacts: [],
+        pay_remark: ''
+      }
+    }
+  },
+  computed: {
+    remarkList () {
+      console.log(this.detailData.pay_remark)
+      let tags = this.detailData.pay_remark.split(';')
+      tags.forEach((tag, index) => {
+        if (!this.remarkOptions.includes(tag.trim())) {
+          tags.splice(index, 1)
+        }
+      })
+      return tags
     }
   },
   watch: {
     remarkList (newList) {
-      if (this.colorList.length < newList.length) {
+      while (this.colorList.length < newList.length) {
         this.colorList.push(this.color16())
       }
+      this.remarkSelect = this.remarkList
+    },
+    orderNo (newOrder) {
+      this.order_no = newOrder
+      this.fetchOrderDetailData()
     }
   },
+  created () {
+    this.fetchOrderDetailData()
+  },
   methods: {
+    fetchOrderDetailData () {
+      getOrderDetail(this.order_no).then(reponse => {
+        let data = reponse.data.data
+        this.detailData.customer = data.customer
+        this.detailData.phone = data.phone
+        this.detailData.pay_type = data.pay_type
+        this.detailData.order_type = data.order_type
+        this.detailData.ctime = data.ctime
+        this.detailData.payed_sum = data.payed_sum
+        this.detailData.detail = data.detail === null ? [] : data.detail
+        this.detailData.contacts = data.contacts
+        this.detailData.pay_remark = data.pay_remark
+        this.detailData.detail.forEach(ele => {
+          ele.roomNos = this.getRoomNosByDetail(ele)
+        })
+      })
+    },
+    getRoomNosByDetail (detail) {
+      let key = dateStringToDateNum(detail.use_time)
+      let roomNos = ''
+      if (detail === null || detail.room_nos === null || !detail.room_nos.hasOwnProperty(key)) {
+        return '无'
+      }
+      detail.room_nos[key].forEach((ele, index) => {
+        roomNos += ele.room_id
+        if (index > 0) {
+          roomNos += ','
+        }
+      })
+      console.log(roomNos)
+      return roomNos
+    },
     showBackendRemarkDialog () {
       this.backendRemarkDialogVisible = true
     },
@@ -213,7 +286,7 @@ export default {
 <style lang="scss">
 .my-tag{
   .el-icon-close{
-    color: inherit;
+    color: inherit!important;
   }
 }
 </style>

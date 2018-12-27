@@ -30,9 +30,9 @@
           </template>
       </el-table-column>
       <el-table-column prop="customer" label="订购人" width="80"></el-table-column>
-      <el-table-column prop="address" label="入住人">
+      <el-table-column prop="peoples" label="入住人">
         <template slot-scope="scope">
-           {{scope.row.peoples}}
+           {{getPeoples(scope.row.peoples)}}
         </template>
       </el-table-column>
       <el-table-column prop="phone" label="电话" width="120"></el-table-column>
@@ -42,17 +42,21 @@
         </template>
       </el-table-column>
       <el-table-column prop="total" label="总额"></el-table-column>
-      <el-table-column prop="address" label="待支付金额"></el-table-column>
-      <el-table-column prop="pay_type" label="支付方式"></el-table-column>
-      <el-table-column prop="address" label="下单员"></el-table-column>
-      <el-table-column prop="address" label="是否处理">
+      <el-table-column prop="address" label="待支付金额">
+        <template slot-scope="scope">
+          {{scope.row.total-scope.row.payed_sum}}
+        </template>
+      </el-table-column>
+      <!-- <el-table-column prop="pay_type" label="支付方式"></el-table-column> -->
+      <el-table-column prop="operator_id" label="下单员"></el-table-column>
+      <el-table-column prop="is_deal" label="是否处理">
         <template slot-scope="scope">
           <el-tag type="danger">未处理</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="address" label="操作" width="200px">
         <template slot-scope="scope">
-          <el-button type="text" @click="viewsDetail">查看详情</el-button>
+          <el-button type="text" @click="viewsDetail(scope.row.no)">查看详情</el-button>
           <el-button type="text" @click="settleAccounts">结账</el-button>
         </template>
       </el-table-column>
@@ -69,7 +73,7 @@
       :visible.sync="viewsDetailDialogVisible"
       width="50%"
       >
-      <order-detail></order-detail>
+      <order-detail :orderNo="viewsDetailOrderNo"></order-detail>
       <div class="footer">
         <el-button size="mini" type="danger">关闭</el-button>
         <el-button size="mini" type="primary">结账</el-button>
@@ -95,7 +99,8 @@ export default {
     return {
       OrderListHelper: OrderListHelper,
       settleAccountsDialogVisible: false,
-      viewsDetailDialogVisible: false
+      viewsDetailDialogVisible: false,
+      viewsDetailOrderNo: ''
     }
   },
   methods: {
@@ -113,8 +118,16 @@ export default {
     settleAccounts () {
       this.settleAccountsDialogVisible = true
     },
-    viewsDetail () {
+    viewsDetail (orderNo) {
       this.viewsDetailDialogVisible = true
+      this.viewsDetailOrderNo = orderNo
+    },
+    getPeoples (peoples) {
+      let peopleNames = []
+      peoples.forEach(people => {
+        peopleNames.push(people.name)
+      })
+      return peopleNames.join('，')
     }
   },
   computed: {

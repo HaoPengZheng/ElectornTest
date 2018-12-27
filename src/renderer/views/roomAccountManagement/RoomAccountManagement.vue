@@ -25,6 +25,8 @@ export default {
     RoomAccountDetail,
     RoomAccountList,
     KeyControl
+  },
+  methods: {
   }
 }
 </script>
