@@ -1,20 +1,21 @@
 <template>
   <div class="choose-room">
-    <div class="room-container">
+    <div class="room-container" v-loading="loading">
       <div class="time-bar">
         <el-date-picker
           v-model="startDate"
           type="date"
           placeholder="选择日期"
           format="yyyy-MM-dd"
+          @change="datePickerChange"
           value-format="timestamp">
         </el-date-picker>
-        <div class="date-scroll">
+        <div class="date-scroll" ref='dateScroll'>
           <span class="date-item"
                 v-for="(dateItem, index) in dateList"
                 :key="index"
                 :class="{ active: (index === currentDateItem) }"
-                @click="dateItemClick(index, dateItem.timestamp)">
+                @click="dateItemClick($event, index, dateItem.timestamp)">
             {{dateItem.date}} ({{dateItem.week}})
           </span>
         </div>
@@ -36,34 +37,67 @@
             <div class="room-item"
                  v-for="(roomItem, index) in floorItem"
                  :key="index"
-                 v-show="currentTypeId === -1 || currentTypeId === roomItem.type_id">
+                 v-show="(currentTypeId === -1 || currentTypeId === roomItem.type_id) && (currentStatus == -1 || (currentStatus === 1 && isLockedList.indexOf(roomItem.room_id) != -1) || (currentStatus === 2 && isLockedList.indexOf(roomItem.room_id) === -1))"
+                 :class="{ 'is-locked': isLockedList.indexOf(roomItem.room_id) != -1}">
               {{roomItem.room_num}}<br/>
               <span class="type-name">{{roomItem.type_name}}</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="status-bar"></div>
+      <div class="status-bar">
+        <!--<span class="status-item status-all"><span class="status-color"></span>全部（{{allNum}}）</span>-->
+        <span class="status-item"
+              v-for="item in statusList"
+              :key="item.id"
+              :class="[item.class, { 'active': (currentStatus === item.id) }]"
+              @click="statusItemClick(item.id)">
+          <span class="status-color"></span>
+          {{item.text}}
+        </span>
+        <!--<span class="status-item status-locked"><span class="status-color"></span>预定（{{lockedNum}}）</span>-->
+        <!--<span class="status-item status-free"><span class="status-color"></span>空闲（{{freeNum}}）</span>-->
+      </div>
     </div>
-    <div class="order-container"></div>
+    <div class="order-container">
+      <div class="action-list">
+        <el-button type="primary"
+                   class="btn-arrange-room"
+                   :loading="loadingArrangeRooms"
+                   size="mini"
+                   @click="doAutoArrangeRooms">系统排房</el-button>
+      </div>
+      <order-list class="order-list" ref="orderList" :currentDateNum="currentDateNum"></order-list>
+    </div>
   </div>
 </template>
 
 <script>
-import { getShopsRooms, roomDayStatus } from '@/api/room'
+import { getShopsRooms, roomDayStatus, autoArrangeRooms } from '@/api/room'
 import { dateNumToDateString, getDateWeekByDateNum } from '@/utils/date'
+import OrderList from './components/OrderList'
 
 export default {
   name: 'ChooseRoom',
+  components: {OrderList},
   data () {
     return {
+      loading: false,
+      loadingArrangeRooms: false,
       startDate: '',
       dateList: [],
+      currentDateNum: '',
       currentDateItem: 0,
       currentTypeItem: 0,
       currentTypeId: -1,
+      currentStatus: -1,
       roomType: [],
-      floorRooms: {}
+      floorRooms: {},
+      roomList: '',
+      isLockedList: [],
+      allNum: 0,
+      lockedNum: 0,
+      freeNum: 0
     }
   },
   created () {
@@ -84,28 +118,62 @@ export default {
       list.push(obj)
     }
     this.dateList = list
+    this.startDate = ''
+    this.currentDateNum = list[0].timestamp
     this.getRooms()
   },
+  computed: {
+    statusList () {
+      return [
+        {id: 1, text: '预定（' + this.lockedNum + '）', class: 'status-locked'},
+        {id: 2, text: '空闲（' + this.freeNum + '）', class: 'status-free'}
+      ]
+    }
+  },
   methods: {
-    dateItemClick: function (index, date) {
+    datePickerChange: function () {
+      if (this.startDate) {
+        this.currentDateItem = -1
+        this.currentDateNum = (this.startDate + '').substring(0, 10)
+        this.getRoomStatus()
+        this.$refs.dateScroll.scrollLeft = 0
+      }
+    },
+    dateItemClick: function (e, index, date) {
+      this.startDate = ''
       this.currentDateItem = index
-      var query = { date: date }
-      roomDayStatus(query).then(response => {
-        console.log(response.data.data)
-      })
+      this.currentDateNum = date
+      this.getRoomStatus()
+      this.$refs.dateScroll.scrollLeft = index * e.srcElement.clientWidth - (e.srcElement.clientWidth * 0.5)
     },
     typeItemClick: function (typeId) {
       this.currentTypeId = typeId
     },
     getRooms: function () {
+      this.loading = true
       getShopsRooms().then(response => {
+        this.loading = false
         this.formatRoomsData(response.data.data)
+        this.getRoomStatus()
+      }).catch(reason => {
+        this.loading = false
+      })
+    },
+    getRoomStatus: function () {
+      this.loading = true
+      var query = { date: this.currentDateNum }
+      roomDayStatus(query).then(response => {
+        this.loading = false
+        this.filterIsLockedRoomList(response.data.data)
+      }).catch(reason => {
+        this.loading = false
       })
     },
     formatRoomsData: function (data) {
       let roomType = []
       let roomTypeTemp = []
       let floorRooms = {}
+      this.roomList = data
       for (let i = 0; i < data.length; i++) {
         if (roomTypeTemp.indexOf(data[i].type_name) === -1) {
           let obj = {type_id: data[i].type_id, type_name: data[i].type_name}
@@ -119,12 +187,48 @@ export default {
       }
       this.roomType = roomType
       this.floorRooms = floorRooms
+    },
+    filterIsLockedRoomList: function (data) {
+      this.isLockedList = []
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].is_locked === 1) {
+          this.isLockedList.push(data[i].room_id)
+        }
+      }
+      this.allNum = this.roomList.length
+      this.lockedNum = this.isLockedList.length
+      this.freeNum = this.allNum - this.lockedNum
+    },
+    statusItemClick: function (statusId) {
+      if (statusId === this.currentStatus) {
+        this.currentStatus = -1
+      } else {
+        this.currentStatus = statusId
+      }
+    },
+    doAutoArrangeRooms: function () {
+      this.loadingArrangeRooms = true
+      autoArrangeRooms({use_time: dateNumToDateString(this.currentDateNum)}).then(response => {
+        this.loadingArrangeRooms = false
+        this.$notify({
+          title: (response.data.status === 'success' ? '成功' : '失败'),
+          message: response.data.message,
+          type: response.data.status
+        })
+        this.getRoomStatus()
+        this.$refs.orderList.getOrderList()
+      }).catch(reason => {
+        this.loadingArrangeRooms = false
+      })
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+  $color-locked: #f56c6c;
+  $color-free: #6ccac9;
+
   .choose-room {
     display: flex;
     flex-direction: row;
@@ -201,7 +305,51 @@ export default {
       }
       .status-bar {
         min-height: 60px;
-        background: #795da3;
+        border-top: 1px solid #ddd;
+        .status-item {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          min-width: 80px;
+          height: 30px;
+          padding: 0 5px;
+          margin-right: 15px;
+          border: 1px solid #222;
+          border-radius: 3px;
+          cursor: pointer;
+          &.active {
+            background: #222;
+            color: #fff;
+            &:hover {
+              background: #222;
+            }
+          }
+          &:hover {
+            background: #ddd;
+          }
+          .status-color {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 3px;
+          }
+          &.status-all {
+            .status-color {
+              background: #ddd;
+            }
+          }
+          &.status-locked {
+            .status-color {
+              background: $color-locked;
+            }
+          }
+          &.status-free {
+            .status-color {
+              background: $color-free;
+            }
+          }
+        }
       }
       .rooms {
         flex: 1;
@@ -230,12 +378,19 @@ export default {
               border: 1px solid #f1f1f1;
               font-size: 20px;
               font-weight: bold;
-              background: #6ccac9;
+              background: $color-free;
               color: #ff6c60;
               cursor: pointer;
               .type-name {
                 font-size: 18px;
                 color: #8175c7;
+              }
+              &.is-locked {
+                background: $color-locked;
+                color: #fff;
+                * {
+                  color: #fff;
+                }
               }
             }
           }
@@ -243,8 +398,21 @@ export default {
       }
     }
     .order-container {
-      width: 250px;
-      background: #e7e1cd;
+      display: flex;
+      flex-direction: column;
+      width: 300px;
+      background: #fff;
+      .action-list {
+        .btn-arrange-room {
+          margin: 10px;
+        }
+      }
+      .order-list {
+        /*height: calc(100% - 60px);*/
+        flex: 1;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
     }
   }
 </style>

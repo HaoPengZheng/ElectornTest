@@ -46,7 +46,7 @@
           width=""
           header-align="center">
           <template slot-scope="scope">
-            <span :class="{red: (scope.row[roomTypeItem+'_left_num'] === 0)}">{{scope.row[roomTypeItem+'_left_num']}}</span>
+            <span :class="{red: (scope.row[roomTypeItem+'_left_num'] <= 0)}">{{scope.row[roomTypeItem+'_left_num']}}</span>
           </template>
         </el-table-column>
         <!--<el-table-column-->
@@ -119,6 +119,8 @@ export default {
         this.loading = false
         let data = this.formatRoomSurplus(response.data.data)
         this.setRoomSurplus(data)
+      }).catch(reason => {
+        this.loading = false
       })
     },
     formatRoomSurplus: function (data) {
@@ -160,6 +162,7 @@ export default {
     margin: 0 auto 20px;
   }
   .red {
+    font-weight: bold;
     color: red;
   }
 </style>

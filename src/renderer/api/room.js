@@ -128,3 +128,12 @@ export function getRoomLog () {
     })
   })
 }
+
+// 系统排房
+export function autoArrangeRooms (data) {
+  return request({
+    url: '/autoArrangeRooms',
+    method: 'POST',
+    data
+  })
+}
