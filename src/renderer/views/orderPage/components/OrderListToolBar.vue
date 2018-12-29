@@ -153,7 +153,7 @@
           </el-col>
         </el-form-item>
         <el-button type="primary" :size="formUiSize">确定</el-button>
-        <el-button :size="formUiSize">取消</el-button>
+        <el-button :size="formUiSize" @click="isMoreSearchVisibility=false">取消</el-button>
       </el-form>
     </div>
   </div>

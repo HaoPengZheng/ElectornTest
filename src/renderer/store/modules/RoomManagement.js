@@ -19,7 +19,8 @@ const defaultState = {
     filterType: 'state',
     typeName: '',
     emphasizeColor: ''
-  }
+  },
+  roomDataForId: {}
 }
 const state = {
   roomDetail: {
@@ -60,6 +61,7 @@ const mutations = {
   },
   Init_Original_Room_Data (state, roomdata) {
     state.originalRoomData = roomdata
+    state.roomDataForId = getRoomDataForId(roomdata)
   },
   Init_Room_List (state, roomList) {
     state.roomList = roomList
@@ -143,4 +145,12 @@ export default {
   getters,
   mutations,
   actions
+}
+
+function getRoomDataForId (originalRoomData) {
+  let roomDataForId = {}
+  for (let key in originalRoomData) {
+    roomDataForId[originalRoomData[key].room_id] = originalRoomData[key]
+  }
+  return roomDataForId
 }
