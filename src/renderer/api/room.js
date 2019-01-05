@@ -55,7 +55,7 @@ export function roomtypes (id) {
   })
 }
 
-// 清理缓存
+// 清除缓存
 export function cleanRoomsCache () {
   return request({
     url: '/cleanRoomsCache',

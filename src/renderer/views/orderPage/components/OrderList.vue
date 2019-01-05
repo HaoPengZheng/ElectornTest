@@ -1,5 +1,8 @@
 <template>
-  <div class="order-list" ref="orderList">
+  <div
+    class="order-list"
+    ref="orderList"
+  >
     <order-list-tool-bar></order-list-tool-bar>
     <el-table
       v-loading="isOrderTableLoading"
@@ -110,7 +113,7 @@
           >查看详情</el-button>
           <el-button
             type="text"
-            @click="settleAccounts"
+            @click="settleAccounts(scope.row.no)"
           >结账</el-button>
           <el-button
             type="text"
@@ -128,13 +131,12 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog
-      title="请选择结账方式："
-      :visible.sync="settleAccountsDialogVisible"
-      width="40%"
-    >
-      <settle-account></settle-account>
-    </el-dialog>
+    <settle-account
+      :order-no="viewsSettleAccountOrderNo"
+      :show="settleAccountsDialogVisible"
+      @openOrderDialog="settleAccountsDialogVisible=$event"
+    ></settle-account>
+
     <el-dialog
       title="请输入取消订单的原因："
       :visible.sync="cancelOrderDialogVisible"
@@ -146,40 +148,29 @@
       >
       </el-input>
     </el-dialog>
-    <el-dialog
-      title="订单"
-      :visible.sync="viewsDetailDialogVisible"
-      width="50%"
+
+    <!-- 订单详情 -->
+    <order-detail
+      :order-no="viewsDetailOrderNo"
+      :show="viewsDetailDialogVisible"
+      @openOrderDialog="viewsDetailDialogVisible=$event"
     >
-      <order-detail :orderNo="viewsDetailOrderNo"></order-detail>
-      <div class="footer">
-        <el-button
-          size="mini"
-          type="danger"
-          @click="viewsDetailDialogVisible=false"
-        >关闭</el-button>
-        <el-button
-          size="mini"
-          type="primary"
-        >结账</el-button>
-        <el-button
-          size="mini"
-          type="primary"
-        >编辑</el-button>
-        <el-button
-          size="mini"
-          type="primary"
-        >处理</el-button>
-      </div>
-    </el-dialog>
-    <div >
+    </order-detail>
+    <!-- 订单快速搜索框 -->
+    <div>
       <el-card
         class="box-card"
         style="width:200px"
         :style="searchStyle"
       >
-        <div style="text-align:left" >搜索：</div>
-        <el-input v-model="searchKey" @keyup.esc.native="hiddenSearch" @keyup.enter.native="handleSearch" ref="searchInput"  @blur="hiddenSearch"></el-input>
+        <div style="text-align:left">搜索：</div>
+        <el-input
+          v-model="searchKey"
+          @keyup.esc.native="hiddenSearch"
+          @keyup.enter.native="handleSearch"
+          ref="searchInput"
+          @blur="hiddenSearch"
+        ></el-input>
       </el-card>
     </div>
   </div>
@@ -187,11 +178,11 @@
 <script>
 import OrderListToolBar from './OrderListToolBar'
 import OrderListHelper from './OrderListHelper'
-import SettleAccount from './SettleAccount'
-import OrderDetail from './OrderDetail'
 import DialogCard from '@/components/DialogCard/DialogCard'
 import { getOrders } from '@/api/order'
 import objectUtil from '@/utils/ObjectUtil'
+import OrderDetail from '../../orderDetailDialog/OrderDetailDialog'
+import SettleAccount from '../../orderSettleAccountDialog/OrderSettleAccountDialog'
 export default {
   name: 'order-list',
   components: {
@@ -207,6 +198,7 @@ export default {
       viewsDetailDialogVisible: false,
       cancelOrderDialogVisible: false,
       viewsDetailOrderNo: '',
+      viewsSettleAccountOrderNo: '',
       tablePropList: ['no', 'order_type', 'detail.use_time', 'customer', 'peoples', 'phone', 'state', 'total', 'address', 'operator_id', 'is_deal', 'operator'],
       searchStyle: {
         backgroundColor: 'rgb(255, 208, 84)',
@@ -233,8 +225,9 @@ export default {
       name += `(${detail.use_time})*${detail.quantity}`
       return name
     },
-    settleAccounts () {
+    settleAccounts (orderNo) {
       this.settleAccountsDialogVisible = true
+      this.viewsSettleAccountOrderNo = orderNo
     },
     viewsDetail (orderNo) {
       this.viewsDetailDialogVisible = true
@@ -383,8 +376,8 @@ export default {
     color: #303133;
   }
 }
-.search-button{
-  display: flex!important;
+.search-button {
+  display: flex !important;
   flex-direction: column;
   justify-content: center;
   align-items: center;

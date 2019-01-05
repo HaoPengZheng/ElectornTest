@@ -93,7 +93,7 @@ export default {
       currentStatus: -1,
       roomType: [],
       floorRooms: {},
-      roomList: '',
+      roomList: [],
       isLockedList: [],
       allNum: 0,
       lockedNum: 0,
@@ -120,7 +120,11 @@ export default {
     this.dateList = list
     this.startDate = ''
     this.currentDateNum = list[0].timestamp
-    this.getRooms()
+    if (this.$store.getters.getRoomList.length) {
+      this.formatRoomsData(this.$store.getters.getRoomList)
+    } else {
+      this.getRooms()
+    }
   },
   computed: {
     statusList () {
@@ -130,12 +134,18 @@ export default {
       ]
     }
   },
+  watch: {
+    currentDateNum: function () {
+      if (this.roomList.length) {
+        this.getRoomStatus()
+      }
+    }
+  },
   methods: {
     datePickerChange: function () {
       if (this.startDate) {
         this.currentDateItem = -1
         this.currentDateNum = (this.startDate + '').substring(0, 10)
-        this.getRoomStatus()
         this.$refs.dateScroll.scrollLeft = 0
       }
     },
@@ -143,7 +153,6 @@ export default {
       this.startDate = ''
       this.currentDateItem = index
       this.currentDateNum = date
-      this.getRoomStatus()
       this.$refs.dateScroll.scrollLeft = index * e.srcElement.clientWidth - (e.srcElement.clientWidth * 0.5)
     },
     typeItemClick: function (typeId) {
@@ -174,6 +183,7 @@ export default {
       let roomTypeTemp = []
       let floorRooms = {}
       this.roomList = data
+      this.$store.dispatch('updateRoomList', data)
       for (let i = 0; i < data.length; i++) {
         if (roomTypeTemp.indexOf(data[i].type_name) === -1) {
           let obj = {type_id: data[i].type_id, type_name: data[i].type_name}
@@ -400,7 +410,7 @@ export default {
     .order-container {
       display: flex;
       flex-direction: column;
-      width: 300px;
+      width: 400px;
       background: #fff;
       .action-list {
         .btn-arrange-room {

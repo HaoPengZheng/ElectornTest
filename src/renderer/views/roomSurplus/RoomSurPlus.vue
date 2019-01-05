@@ -16,6 +16,7 @@
       :data="dataRoomSurplus"
       v-loading="loading"
       height="calc(100% - 60px)"
+      size="mini"
       style="width: 100%">
       <el-table-column
         prop="date"

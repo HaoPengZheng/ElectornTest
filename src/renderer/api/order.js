@@ -1,29 +1,48 @@
 import request from '@/utils/request'
 
-/**
- *
- * @date 2018-12-27
- * @export
- * @param {*} query
- * @returns
- */
-export function getOrders (query) {
+export function getOrders (params) {
   return request({
     url: '/orders',
     method: 'get',
-    params: query
+    params
   })
 }
 
-/**
- *
- *
- * @date 2018-12-27
- * @export
- */
 export function getOrderDetail (orderId) {
   return request({
     url: '/orders/' + orderId + '/details',
     method: 'get'
+  })
+}
+
+// 订单结账
+export function settleAccount (orderId, data) {
+  return request({
+    url: '/orders/' + orderId + '/transactions',
+    method: 'post',
+    data
+  })
+}
+
+// 获取结账方式
+export function getPaytypes () {
+  return request({
+    url: '/paytypes',
+    method: 'get'
+  })
+}
+
+// 新增结账方式
+/*
+alias:支付宝
+sign:ylkz_zfb
+is_normal:1
+is_add_point:1
+is_hand_point:0
+*/
+export function addPaytypes () {
+  return request({
+    url: '/paytypes',
+    method: 'post'
   })
 }

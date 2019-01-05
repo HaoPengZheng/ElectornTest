@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loadingOrderDetail">
+  <div>
     <div class="order_detail_container">
       <table class="t table table-bordered table-hover table_info">
         <tbody>
@@ -34,7 +34,13 @@
             <td>{{detail.quantity}}</td>
             <td>{{detail.use_time}}</td>
             <td>{{detail.price}}</td>
-            <td>{{detail.roomNos}}</td>
+            <td>
+              <span v-if="detail.roomNos === '无'">
+                <el-button size="mini" type="primary"
+                @click="handleChooseRoom(detail.use_time)">选房</el-button>
+              </span>
+              <span v-else>{{detail.roomNos}}</span>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -167,7 +173,6 @@ export default {
   },
   data () {
     return {
-      loadingOrderDetail: false,
       backendRemarkDialogVisible: false,
       remarkSelect: [],
       remarkOptions: ['散客', 'L类保密', '尊尚', '加1童', '大床', '非吸烟', '送单车', '送单车及千色', '双床', '相连房', '高楼层', '送千色', '时光邮驿'],
@@ -215,9 +220,9 @@ export default {
   },
   methods: {
     fetchOrderDetailData () {
-      this.loadingOrderDetail = true
+      this.$emit('openLoadingOrderDetail', true)
       getOrderDetail(this.order_no).then(reponse => {
-        this.loadingOrderDetail = false
+        this.$emit('openLoadingOrderDetail', false)
         let data = reponse.data.data
         this.detailData.customer = data.customer
         this.detailData.phone = data.phone
@@ -232,7 +237,7 @@ export default {
           ele.roomNos = this.getRoomNosByDetail(ele)
         })
       }).catch(reason => {
-        this.loadingOrderDetail = false
+        this.$emit('openLoadingOrderDetail', false)
       })
     },
     getRoomNosByDetail (detail) {
@@ -284,6 +289,14 @@ export default {
         return blackColor
       }
       return whiteColor
+    },
+    handleChooseRoom (useTime) {
+      let orderNo = this.orderNo
+      let detailId = ''
+      let inTime = dateStringToDateNum(useTime)
+      let outTime = (+inTime + 24 * 60 * 60) + ''
+      let roomId = ''
+      console.log(orderNo, detailId, inTime, outTime, roomId)
     }
   }
 }
