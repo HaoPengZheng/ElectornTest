@@ -46,3 +46,11 @@ export function addPaytypes () {
     method: 'post'
   })
 }
+
+// 获取所有订单的状态
+export function getOrderStatusOptions () {
+  return request({
+    url: '/orders/status',
+    method: 'get'
+  })
+}

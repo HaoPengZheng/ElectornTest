@@ -30,6 +30,7 @@
         prop="order_type"
         label="订单类型"
         width="120"
+        :render-header="renderHeader"
       >
         <template slot-scope="scope">
           <el-tag :type="OrderListHelper.getTagTypeByOrderType(scope.row.order_type)">{{scope.row.order_type}}</el-tag>
@@ -71,6 +72,7 @@
       <el-table-column
         prop="state"
         label="状态"
+        :render-header="renderHeader"
       >
         <template slot-scope="scope">
           <el-tag :type="OrderListHelper.getTagTypeByStateType(scope.row.state)">{{scope.row.state}}</el-tag>
@@ -165,12 +167,31 @@
       >
         <div style="text-align:left">搜索：</div>
         <el-input
+          v-if="!isSearchByDropDownList"
           v-model="searchKey"
           @keyup.esc.native="hiddenSearch"
           @keyup.enter.native="handleSearch"
           ref="searchInput"
           @blur="hiddenSearch"
         ></el-input>
+        <el-select
+          v-if="isSearchByDropDownList"
+          v-model="searchKey"
+          ref="searchSelect"
+          placeholder="请选择"
+          @change="handleSearch"
+          @keyup.enter.native="handleSearch"
+          @keyup.esc.native="hiddenSearch"
+          @blur="hiddenSearch"
+        >
+          <el-option
+            v-for="item in dropdownOptions"
+            :key="item"
+            :label="item"
+            :value="item"
+          >
+          </el-option>
+        </el-select>
       </el-card>
     </div>
   </div>
@@ -179,7 +200,7 @@
 import OrderListToolBar from './OrderListToolBar'
 import OrderListHelper from './OrderListHelper'
 import DialogCard from '@/components/DialogCard/DialogCard'
-import { getOrders } from '@/api/order'
+import { getOrders, getOrderStatusOptions } from '@/api/order'
 import objectUtil from '@/utils/ObjectUtil'
 import OrderDetail from '../../orderDetailDialog/OrderDetailDialog'
 import SettleAccount from '../../orderSettleAccountDialog/OrderSettleAccountDialog'
@@ -207,13 +228,27 @@ export default {
         top: '100px',
         'z-index': '999'
       },
+      isSearchByDropDownList: false,
+      dropListOptions: {
+        order_type: [],
+        state: []
+      },
+      dropdownOptions: [],
       searchKey: '',
       searchType: '',
       searchIndex: '',
       searchTags: {}
     }
   },
+  created () {
+    this.doGetOrderStatusOptions()
+  },
   methods: {
+    doGetOrderStatusOptions () {
+      getOrderStatusOptions().then(response => {
+        this.dropListOptions.state = response.data.data
+      })
+    },
     getUseTimeByDetail (detail) {
       let name = ''
       let goods = this.orderListMeta.goods
@@ -240,16 +275,41 @@ export default {
       })
       return peopleNames.join('，')
     },
+    searchFocus () {
+      if (this.isSearchByDropDownList) {
+        this.$nextTick(() => {
+          this.$refs.searchSelect.focus()
+        })
+      } else {
+        this.$nextTick(() => {
+          this.$refs.searchInput.focus()
+        })
+      }
+    },
     showSearch (e, index) {
       let element = document.getElementById('search' + index)
+      // 搜索框定位
       let rect = this.$refs.orderList.getBoundingClientRect()
       this.searchStyle.display = 'block'
       this.$set(this.searchStyle, 'top', (element.getBoundingClientRect().y - rect.y + 15) + 'px')
       this.$set(this.searchStyle, 'left', (element.getBoundingClientRect().x - rect.x + 15) + 'px')
-      this.$nextTick(() => {
-        this.$refs.searchInput.focus()
-      })
+
+      // 根据表头的类型进行划分
       this.searchType = this.tablePropList[index - 1]
+      const needDrownList = ['order_type', 'state']
+      console.log()
+      if (needDrownList.includes(this.searchType)) {
+        if (this.dropListOptions.hasOwnProperty(this.searchType)) {
+          this.dropdownOptions = this.dropListOptions[this.searchType]
+          this.isSearchByDropDownList = true
+        } else {
+          this.isSearchByDropDownList = false
+        }
+      } else {
+        this.isSearchByDropDownList = false
+      }
+      // 自动获取焦点
+      this.searchFocus()
       this.searchIndex = index
     },
     hiddenSearch () {

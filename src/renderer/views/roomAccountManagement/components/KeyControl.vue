@@ -86,6 +86,9 @@ export default {
   methods: {
     handleHotKey (event) {
       let keycode = event.key
+      if (this.calloutRoomDialogVisible) {
+        return
+      }
       console.log(event)
       console.log(event.key)
       switch (keycode) {
@@ -94,11 +97,15 @@ export default {
         }
       }
     },
+    doElementFocus (element) {
+      setTimeout(() => {
+        element.focus()
+      }, 500)
+    },
     calloutRoom () {
       this.calloutRoomDialogVisible = true
-      this.$nextTick(function () {
-        this.initCalloutRoomDialog()
-        this.$refs.calloutInput.focus()
+      this.$nextTick(() => {
+        this.doElementFocus(this.$refs.calloutInput)
       })
     },
     initCalloutRoomDialog () {
