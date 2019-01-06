@@ -275,17 +275,11 @@ export default {
       let r = parseInt(color.substr(1, 2), 16)
       let g = parseInt(color.substr(3, 2), 16)
       let b = parseInt(color.substr(5, 2), 16)
-      let count = 0
-      if (r > 150) {
-        count++
-      }
-      if (g > 150) {
-        count++
-      }
-      if (b > 150) {
-        count++
-      }
-      if (count > 2) {
+      // 亮度算法
+      // lightness = (red * 0.2126 + green * 0.7152 + blue * 0.0722) / 255
+      let lightness = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 255
+      let threshold = 0.5
+      if (lightness > threshold) {
         return blackColor
       }
       return whiteColor

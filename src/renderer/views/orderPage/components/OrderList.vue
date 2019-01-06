@@ -100,7 +100,7 @@
         label="是否处理"
       >
         <template slot-scope="scope">
-          <el-tag type="danger">未处理</el-tag>
+          <el-tag :type="OrderListHelper.getTagTypeByIsDeal(scope.row.is_deal)"> {{OrderListHelper.getLabelByIsDeal(scope.row.is_deal)}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column

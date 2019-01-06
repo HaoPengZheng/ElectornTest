@@ -9,6 +9,10 @@ const STATE_LABEL_OBJECT = {
   completed: '已完成',
   haveExpired: '已过期'
 }
+const DEAL_LABEL_OBJECT = {
+  haveDeal: '已处理',
+  noDeal: '未处理'
+}
 const TAG_TYPE = {
   default: '',
   warning: 'warning',
@@ -33,6 +37,20 @@ export class OrderListHelper {
       return TAG_TYPE.default
     } else if (state === STATE_LABEL_OBJECT.nonPayment) {
       return TAG_TYPE.warning
+    }
+  }
+  getTagTypeByIsDeal (isDeal) {
+    if (isDeal) {
+      return TAG_TYPE.success
+    } else {
+      return TAG_TYPE.danger
+    }
+  }
+  getLabelByIsDeal (isDeal) {
+    if (isDeal) {
+      return DEAL_LABEL_OBJECT.haveDeal
+    } else {
+      return DEAL_LABEL_OBJECT.noDeal
     }
   }
 }

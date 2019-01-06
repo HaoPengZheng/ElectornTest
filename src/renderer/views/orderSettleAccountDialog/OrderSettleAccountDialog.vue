@@ -9,6 +9,7 @@
       <settle-account
         :orderNo="viewsOrderNo"
         @openLoadingOrderSettleAccount="loadingOrderSettleAccount=$event"
+        @closeDialog="handleClose"
       >
       </settle-account>
 
