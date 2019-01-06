@@ -185,10 +185,10 @@
           @blur="hiddenSearch"
         >
           <el-option
-            v-for="item in dropdownOptions"
-            :key="item"
+            v-for="(item,index) in dropdownOptions"
+            :key="index"
             :label="item"
-            :value="item"
+            :value="index"
           >
           </el-option>
         </el-select>
@@ -316,16 +316,31 @@ export default {
       this.$set(this.searchStyle, 'display', 'none')
     },
     handleSearch () {
+      // arr 是tag标签里面的值
       let arr = []
-      arr.push(this.searchKey)
-      this.$set(this.searchTags, this.searchIndex, arr)
+      // 拷贝一份查询的参数
       let query = objectUtil.deepCopy(this.$store.state.OrderQuery.orderQuery)
+      // 找到快速搜索是哪一个参数
       let key = this.tablePropList[this.searchIndex - 1]
-      query[key] = this.searchKey
+      // 修改参数和tag的值
+      if (key === 'state') {
+        let state = []
+        state.push(this.searchKey)
+        query[key] = state
+        arr.push(this.dropListOptions.state[this.searchKey])
+        this.$set(this.searchTags, this.searchIndex, arr)
+      } else {
+        arr.push(this.searchKey)
+        query[key] = this.searchKey
+      }
+      // 替换Tag值
+      this.$set(this.searchTags, this.searchIndex, arr)
+      // 执行查询并关闭快速查询框
       this.searchKey = ''
       this.getOrdersByQuery(query)
       this.hiddenSearch()
     },
+    // 根据查询的参数更新订单列表
     getOrdersByQuery (query) {
       this.$store.dispatch('updateTableLoading', true)
       getOrders(query)
@@ -338,6 +353,7 @@ export default {
           this.$store.dispatch('updateTableLoading', false)
         })
     },
+    // 关闭Tag时重新执行查询
     handleTagClose (index) {
       this.$set(this.searchTags, index, [])
       let query = objectUtil.deepCopy(this.$store.state.OrderQuery.orderQuery)

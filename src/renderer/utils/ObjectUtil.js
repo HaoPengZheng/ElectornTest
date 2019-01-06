@@ -1,14 +1,34 @@
 class ObjectUtil {
   // 克隆一个对象
-  deepCopy (obj) {
-    if (typeof obj !== 'object') {
+  deepCopy (obj, cache = []) {
+    function find (list, f) {
+      return list.filter(f)[0]
+    }
+
+    // just return if obj is immutable value
+    if (obj === null || typeof obj !== 'object') {
       return obj
     }
-    var newobj = {}
-    for (var attr in obj) {
-      newobj[attr] = this.deepCopy(obj[attr])
+
+    // if obj is hit, it is in circular structure
+    const hit = find(cache, c => c.original === obj)
+    if (hit) {
+      return hit.copy
     }
-    return newobj
+
+    const copy = Array.isArray(obj) ? [] : {}
+    // put the copy into cache at first
+    // because we want to refer it in recursive deepCopy
+    cache.push({
+      original: obj,
+      copy
+    })
+
+    Object.keys(obj).forEach(key => {
+      copy[key] = this.deepCopy(obj[key], cache)
+    })
+
+    return copy
   }
   isNotNullOrUndefined (obj) {
     return obj !== null && obj !== undefined

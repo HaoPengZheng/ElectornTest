@@ -30,7 +30,7 @@ export default {
   methods: {
     getOrderList () {
       this.$store.dispatch('updateTableLoading', true)
-      let defaultQuery = { use_time: dateStringToDateNum(getNowFormatDate()), page: 1 }
+      let defaultQuery = { use_time: dateStringToDateNum(getNowFormatDate()), page: 1, state: [1, 2, 3, 5, 6, 7] }
       getOrders(defaultQuery)
         .then(response => {
           this.$store.dispatch('updateOrderQuery', defaultQuery)
