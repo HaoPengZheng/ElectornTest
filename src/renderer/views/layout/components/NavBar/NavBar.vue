@@ -6,18 +6,21 @@
       </svg>
     </div>
     <div class="nav-bar-right">
+      <change-shop></change-shop>
       <el-button type="danger" @click="showReceptionHelper">前台助手</el-button>
       <user-setting></user-setting>
     </div>
   </div>
 </template>
 <script>
+import ChangeShop from './ChangeShop'
 import UserSetting from './UserSetting'
 import {ipcRenderer} from 'electron'
 export default {
   name: 'nav-bar',
   components: {
-    UserSetting
+    UserSetting,
+    ChangeShop
   },
   methods: {
     showReceptionHelper () {

@@ -191,7 +191,7 @@ export default {
   },
   methods: {
     getRoomtypes () {
-      let shopId = this.$store.getters.shop
+      let shopId = this.$store.getters.getShopId
       roomtypes(shopId).then(response => {
         this.roomTypesObject = response.data.data
         this.roomTypeOptions = this.converterRoomTypesObjectToRoomTypeOptionArr(this.roomTypesObject)

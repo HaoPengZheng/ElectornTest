@@ -1,5 +1,5 @@
 <template>
-  <div class="room-management">
+  <div class="room-management"    v-loading="loading">
     <div>
       <div class="room-management-main">
         <el-row class="height-100">
@@ -55,12 +55,21 @@ export default {
   created: function () {
     this.getAllRoom()
   },
+  data () {
+    return {
+      loading: true
+    }
+  },
   methods: {
     getAllRoom: function () {
       hrooms().then(response => {
         this.$store.dispatch('resetRoomManagement')
         this.$store.dispatch('initRoomList', response.data.data)
+        this.closeLoading()
       })
+    },
+    closeLoading () {
+      this.loading = false
     },
     handleClose () {
       this.$store.dispatch('updateisShowRoomOrderDialog', false)

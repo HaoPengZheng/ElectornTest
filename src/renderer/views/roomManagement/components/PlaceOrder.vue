@@ -144,7 +144,7 @@ export default {
         queryData[`${baseQueryLabel}${orderLabel}[${orderProductList[key].goodsnum_id}][unit]`] = orderProductList[key].unit
       }
       queryData[`${baseQueryLabel}[is_allow]`] = this.isDeliveryWhenAbsent
-      queryData[`${baseQueryLabel}[shop_id]`] = this.$store.getters.shop
+      queryData[`${baseQueryLabel}[shop_id]`] = this.$store.getters.getShopId
       queryData[`${baseQueryLabel}[remark]`] = this.remark
       queryData[`${baseQueryLabel}[room_id]`] = this.$store.state.RoomPlaceOrder.roomInfo.room_id
       addRoomOrder(queryData).then(response => {

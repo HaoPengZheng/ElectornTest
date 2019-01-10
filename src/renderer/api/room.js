@@ -1,6 +1,11 @@
 import request from '@/utils/request'
 import axios from 'axios'
 import qs from 'qs'
+import store from '@/store'
+
+let companyId = store.getters.getCompanyId
+let shopId = store.getters.getShopId
+let tempBaseApi = 'http://192.168.101.128/oqc/index.php/' + companyId + '/'
 
 // 获取房态列表
 export function getRoomSurplus (query) {
@@ -66,7 +71,7 @@ export function cleanRoomsCache () {
 // 获取房间下单的商品类型
 export function getRoomGoods () {
   return new Promise(function (resolve, reject) {
-    axios.get('http://192.168.101.128/oqc/index.php/66/?app=api&mod=RoomService&act=getRoomGoods&shop_id=49&company_id=66').then(resp => {
+    axios.get(tempBaseApi + '?app=api&mod=RoomService&act=getRoomGoods&shop_id=' + shopId + '&company_id=' + companyId + '').then(resp => {
       resolve(resp)
     }).catch(err => {
       reject(err)
@@ -77,7 +82,7 @@ export function getRoomGoods () {
 // 客房服务下单
 export function addRoomOrder (data) {
   return new Promise(function (resolve, reject) {
-    axios.post('http://192.168.101.128/oqc/index.php/66/?app=api&mod=RoomService&act=addRoomOrder', qs.stringify(data)).then(resp => {
+    axios.post(tempBaseApi + '?app=api&mod=RoomService&act=addRoomOrder', qs.stringify(data)).then(resp => {
       resolve(resp)
     }).catch(err => {
       reject(err)
@@ -88,7 +93,7 @@ export function addRoomOrder (data) {
 // 获取房间的下单信息
 export function getOrderByShop () {
   return new Promise(function (resolve, reject) {
-    axios.get('http://192.168.101.128/oqc/index.php/66/?app=api&mod=RoomService&act=getOrderByShop&shop_id=49&company_id=66&employee_id=70777').then(resp => {
+    axios.get(tempBaseApi + '?app=api&mod=RoomService&act=getOrderByShop&shop_id=' + shopId + '&company_id=' + companyId + '&employee_id=70777').then(resp => {
       resolve(resp)
     }).catch(err => {
       reject(err)
@@ -99,7 +104,7 @@ export function getOrderByShop () {
 // 客房服务取消订单
 export function cancelRoomOrder (data) {
   return new Promise(function (resolve, reject) {
-    axios.post('http://192.168.101.128/oqc/index.php/66?app=api&mod=RoomService&act=cancelRoomOrder', qs.stringify(data)).then(response => {
+    axios.post(tempBaseApi + '?app=api&mod=RoomService&act=cancelRoomOrder', qs.stringify(data)).then(response => {
       resolve(response)
     }).catch(err => {
       reject(err)
@@ -110,7 +115,7 @@ export function cancelRoomOrder (data) {
 // 客房服务订单详情
 export function getOrderDetail (data) {
   return new Promise(function (resolve, reject) {
-    axios.post('http://192.168.101.128/oqc/index.php/66?app=api&mod=RoomService&act=getOrderDetail', qs.stringify(data)).then(response => {
+    axios.post(tempBaseApi + '?app=api&mod=RoomService&act=getOrderDetail', qs.stringify(data)).then(response => {
       resolve(response)
     }).catch(err => {
       reject(err)
@@ -121,7 +126,7 @@ export function getOrderDetail (data) {
 // 客房服务订单日志
 export function getRoomLog () {
   return new Promise(function (resolve, reject) {
-    axios.get('http://192.168.101.128/oqc/index.php/66/?app=api&mod=RoomService&act=getRoomLog&shop_id=49&company_id=66&employee_id=70777').then(response => {
+    axios.get(tempBaseApi + '?app=api&mod=RoomService&act=getRoomLog&shop_id=' + shopId + '&company_id=' + companyId + '&employee_id=70777').then(response => {
       resolve(response)
     }).catch(err => {
       reject(err)

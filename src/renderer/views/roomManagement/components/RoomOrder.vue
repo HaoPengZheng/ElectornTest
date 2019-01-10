@@ -142,11 +142,14 @@ export default {
     getRoomGoodsForOrder () {
       getRoomGoods().then(response => {
         this.goods_type = response.data.goods_type
-        this.goods_data = response.data.data
+        if (response.data.data !== false) {
+          this.goods_data = response.data.data
+        }
         this.initPinYin()
       })
     },
     initPinYin () {
+      console.log(this.goods_data)
       this.goods_data.forEach(element => {
         element.pinyin = convertHanziToPinYin(element.materials_name)
         element.lyx = convertHanZiToInitial(element.materials_name)
@@ -154,7 +157,7 @@ export default {
     },
     getOrderList () {
       getOrderByShop().then(response => {
-        this.$store.dispatch('initOrderListByShop', response.data)
+        this.$store.dispatch('initOrderListByShop', response.data !== null ? response.data : [])
       })
     },
     getRoomOrderLogList () {
@@ -201,8 +204,8 @@ export default {
       let logList = []
       let allLogList = this.$store.state.RoomPlaceOrder.orderLogList
       let roomInfo = this.getRoomInfo
-      if (roomInfo === undefined || allLogList === undefined) {
-        return
+      if (roomInfo === undefined || allLogList === undefined || allLogList === null) {
+        return 0
       }
       allLogList.forEach(log => {
         if (log.room_id === roomInfo.room_id) {

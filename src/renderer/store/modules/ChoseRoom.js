@@ -1,6 +1,7 @@
 const state = {
   roomList: [],
-  roomTypeList: []
+  roomTypeList: [],
+  roomListById: {}
 }
 const getters = {
   getRoomList: (state) => {
@@ -13,6 +14,9 @@ const getters = {
 const mutations = {
   Update_Room_List (state, roomList) {
     state.roomList = roomList
+    for (let i = 0; i < roomList.length; i++) {
+      state.roomListById[roomList[i].room_id] = roomList[i]
+    }
   },
   Update_Room_Type_List (state, roomTypeList) {
     state.roomTypeList = roomTypeList

@@ -11,8 +11,15 @@
                 :current-page="currentPage">
         </el-pagination>
         <el-table :data="orderList" v-loading="loadingOrderList" size="mini" height="calc(100% - 26px)" style="width: 100%;">
-            <el-table-column prop="no" label="订单号"></el-table-column>
-            <el-table-column label="状态">
+            <el-table-column
+                    width="100"
+                    fixed
+                    prop="no"
+                    label="订单号"></el-table-column>
+            <el-table-column
+                    width="60"
+                    label="状态"
+                    fixed>
                 <template slot-scope="scope">
                     <span :class="{
                     'green' : isOrderItemChosen(scope.row) === '已排房',
@@ -21,10 +28,22 @@
                     }">{{isOrderItemChosen(scope.row)}}&nbsp;</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="customer" label="订购人"></el-table-column>
-            <el-table-column label="操作" style="padding-right: 10px;box-sizing: border-box;">
+            <el-table-column
+                    prop="customer"
+                    label="订购人"></el-table-column>
+            <el-table-column
+                    label="房间号">
                 <template slot-scope="scope">
-                    <el-button size="mini" @click="handleOrderDetail(scope.row.no)">查看详情</el-button>
+                    <span v-html="getOrderRooms(scope.row)" style="word-break: break-word;"></span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    width="70"
+                    fixed="right"
+                    label="操作"
+                    style="padding-right: 10px;box-sizing: border-box;">
+                <template slot-scope="scope">
+                    <el-button size="mini" @click="handleOrderDetail(scope.row.no)">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -86,7 +105,7 @@ export default {
         this.queryOrderList()
       } else {
         let typeIdList
-        roomtypes(this.$store.getters.shop).then(responseRoomType => {
+        roomtypes(this.$store.getters.getShopId).then(responseRoomType => {
           typeIdList = responseRoomType.data.data.map(function (item) {
             return item.type_id
           })
@@ -117,7 +136,7 @@ export default {
       // -1 未排房 0 已排房（未排完） 1 已排房
       let currentDate = +this.currentDateNum
       let list = row.detail.filter(function (item) {
-        return +dateStringToDateNum(item.use_time) === currentDate
+        return +dateStringToDateNum(item.use_time) === currentDate && item.is_del === 0
       })
       let arrayChosen = list.map(function (item) {
         let code = -1
@@ -146,6 +165,27 @@ export default {
     handleOrderDetail: function (OrderNo) {
       this.viewsDetailDialogVisible = true
       this.viewsDetailOrderNo = OrderNo
+    },
+    getOrderRooms: function (order) {
+      let rooms = []
+      for (let i = 0; i < order.detail.length; i++) {
+        if (order.detail[i].room_nos) {
+          let roomNos = order.detail[i].room_nos[this.currentDateNum]
+          if (roomNos) {
+            let orderItemDateRooms = roomNos.map(function (item) {
+              return item.room_id
+            })
+            rooms = rooms.concat(orderItemDateRooms)
+          }
+        }
+      }
+      let tempRooms = []
+      for (let i = 0; i < rooms.length; i++) {
+        if (tempRooms.indexOf(rooms[i]) === -1) {
+          tempRooms.push(rooms[i])
+        }
+      }
+      return tempRooms.join(' / ')
     }
   }
 }

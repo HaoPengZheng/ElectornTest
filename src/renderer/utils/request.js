@@ -4,13 +4,13 @@ import store from '@/store'
 // import { getToken } from '@/utils/auth'
 
 const service = axios.create({
-  baseURL: store.getters.base_api, // api的base_url
-  timeout: 10000 // request timeout
+  baseURL: store.getters.getBaseApi, // api的base_url
+  timeout: 30000 // request timeout
 })
 
 service.interceptors.request.use(config => {
-  config.headers['company'] = store.getters.company
-  config.headers['shop'] = store.getters.shop
+  config.headers['company'] = store.getters.getCompanyId
+  config.headers['shop'] = store.getters.getShopId
   if (store.getters.token) {
     // config.headers['X-Token'] = getToken()
   }
@@ -27,7 +27,7 @@ service.interceptors.response.use(
     Message({
       message: error.message,
       type: 'error',
-      duration: 30 * 1000
+      duration: 10 * 1000
     })
     return Promise.reject(error)
   })

@@ -67,7 +67,6 @@
       title="入住"
       :visible.sync="checkInDialogVisible"
       width="40%"
-      :before-close="handleClose"
       custom-class="checkInDialog"
       @click.native.stop="stopProp"
     >

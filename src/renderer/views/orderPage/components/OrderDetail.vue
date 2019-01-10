@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loadingOrderDetail">
     <div class="order_detail_container">
       <table class="t table table-bordered table-hover table_info">
         <tbody>
@@ -34,13 +34,7 @@
             <td>{{detail.quantity}}</td>
             <td>{{detail.use_time}}</td>
             <td>{{detail.price}}</td>
-            <td>
-              <span v-if="detail.roomNos === '无'">
-                <el-button size="mini" type="primary"
-                @click="handleChooseRoom(detail)">选房</el-button>
-              </span>
-              <span v-else>{{detail.roomNos}}</span>
-            </td>
+            <td>{{detail.roomNos}}</td>
           </tr>
         </tbody>
       </table>
@@ -162,24 +156,18 @@
         </div>
       </el-dialog>
     </div>
-    <choose-room-dialog
-            :currentGoodsNo="currentGoodsNo"
-            :currentQuantity="currentQuantity"
-            :openDialog="openDialog"
-            @openDialog="openDialog=$event"></choose-room-dialog>
   </div>
 </template>
 <script>
 import {getOrderDetail} from '@/api/order'
 import {dateStringToDateNum} from '@/utils/date'
-import ChooseRoomDialog from '../../chooseRoomDialog/chooseRoomDialog'
 export default {
   props: {
     orderNo: String
   },
-  components: {ChooseRoomDialog},
   data () {
     return {
+      loadingOrderDetail: false,
       backendRemarkDialogVisible: false,
       remarkSelect: [],
       remarkOptions: ['散客', 'L类保密', '尊尚', '加1童', '大床', '非吸烟', '送单车', '送单车及千色', '双床', '相连房', '高楼层', '送千色', '时光邮驿'],
@@ -195,10 +183,7 @@ export default {
         payed_sum: '',
         contacts: [],
         pay_remark: ''
-      },
-      openDialog: false,
-      currentGoodsNo: '',
-      currentQuantity: ''
+      }
     }
   },
   computed: {
@@ -230,9 +215,9 @@ export default {
   },
   methods: {
     fetchOrderDetailData () {
-      this.$emit('openLoadingOrderDetail', true)
+      this.loadingOrderDetail = true
       getOrderDetail(this.order_no).then(reponse => {
-        this.$emit('openLoadingOrderDetail', false)
+        this.loadingOrderDetail = false
         let data = reponse.data.data
         this.detailData.customer = data.customer
         this.detailData.phone = data.phone
@@ -247,7 +232,7 @@ export default {
           ele.roomNos = this.getRoomNosByDetail(ele)
         })
       }).catch(reason => {
-        this.$emit('openLoadingOrderDetail', false)
+        this.loadingOrderDetail = false
       })
     },
     getRoomNosByDetail (detail) {
@@ -285,24 +270,20 @@ export default {
       let r = parseInt(color.substr(1, 2), 16)
       let g = parseInt(color.substr(3, 2), 16)
       let b = parseInt(color.substr(5, 2), 16)
-      // 亮度算法
-      // lightness = (red * 0.2126 + green * 0.7152 + blue * 0.0722) / 255
-      let lightness = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 255
-      let threshold = 0.5
-      if (lightness > threshold) {
+      let count = 0
+      if (r > 150) {
+        count++
+      }
+      if (g > 150) {
+        count++
+      }
+      if (b > 150) {
+        count++
+      }
+      if (count > 2) {
         return blackColor
       }
       return whiteColor
-    },
-    handleChooseRoom (detail) {
-      // let orderNo = detail.order_no
-      // let detailId = detail.id
-      // let inTime = dateStringToDateNum(detail.use_time)
-      // let outTime = (+inTime + 24 * 60 * 60) + ''
-      // let roomId = ''
-      this.openDialog = true
-      this.currentGoodsNo = detail.goods_no
-      this.currentQuantity = detail.quantity
     }
   }
 }

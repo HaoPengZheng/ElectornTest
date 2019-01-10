@@ -194,6 +194,9 @@ export default {
           floorRooms[data[i].floor] = []
         }
         floorRooms[data[i].floor].push(data[i])
+        floorRooms[data[i].floor].sort(function (a, b) {
+          return +a.room_num - +b.room_num
+        })
       }
       this.roomType = roomType
       this.floorRooms = floorRooms
@@ -410,7 +413,7 @@ export default {
     .order-container {
       display: flex;
       flex-direction: column;
-      width: 400px;
+      width: 420px;
       background: #fff;
       .action-list {
         .btn-arrange-room {

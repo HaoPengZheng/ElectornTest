@@ -9,7 +9,7 @@ import { Notification } from 'element-ui'
 window.io = io
 window.Echo = new Echo({
   broadcaster: 'socket.io',
-  host: store.getters.socket_host
+  host: store.getters.getSocketHost
 })
 
 /*
