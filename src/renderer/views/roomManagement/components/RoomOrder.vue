@@ -205,7 +205,7 @@ export default {
       let allLogList = this.$store.state.RoomPlaceOrder.orderLogList
       let roomInfo = this.getRoomInfo
       if (roomInfo === undefined || allLogList === undefined || allLogList === null) {
-        return 0
+        return []
       }
       allLogList.forEach(log => {
         if (log.room_id === roomInfo.room_id) {
