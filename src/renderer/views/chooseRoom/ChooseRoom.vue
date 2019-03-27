@@ -132,9 +132,15 @@ export default {
         {id: 1, text: '预定（' + this.lockedNum + '）', class: 'status-locked'},
         {id: 2, text: '空闲（' + this.freeNum + '）', class: 'status-free'}
       ]
+    },
+    isReload: function () {
+      return this.$store.getters.getIsChosen
     }
   },
   watch: {
+    isReload () {
+      this.getRoomStatus()
+    },
     currentDateNum: function () {
       if (this.roomList.length) {
         this.getRoomStatus()
@@ -226,12 +232,14 @@ export default {
         this.$notify({
           title: (response.data.status === 'success' ? '成功' : '失败'),
           message: response.data.message,
-          type: response.data.status
+          type: (response.data.status === 'success' ? 'success' : 'error')
         })
-        this.getRoomStatus()
-        this.$refs.orderList.getOrderList()
+        this.$store.dispatch('updateIsChosen', new Date().getTime())
+        // this.getRoomStatus()
+        // this.$refs.orderList.getOrderList()
       }).catch(reason => {
         this.loadingArrangeRooms = false
+        this.$message.error(reason.message)
       })
     }
   }

@@ -17,7 +17,8 @@ export default {
       shopValue: this.$store.getters.getShopId,
       shopOptions: [
         {value: 49, label: '云来客栈'},
-        {value: 51, label: '温泉部'}
+        {value: 50, label: '御瀛庄'},
+        {value: 51, label: '御泉府邸'}
       ]
     }
   },

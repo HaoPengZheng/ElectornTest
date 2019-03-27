@@ -8,6 +8,9 @@
           <router-link tag="li" to="/hotal-management/ChooseRoom">排房</router-link>
           <router-link tag="li" to="/hotal-management/OrderPage">订单</router-link>
           <router-link tag="li" to="/hotal-management/RoomAccountManagement">房间帐管理</router-link>
+          <router-link tag="li" to="/hotal-management/RoomCard">房卡</router-link>
+          <router-link tag="li" to="/hotal-management/AddOrder">下单</router-link>
+          <router-link tag="li" to="/hotal-management/RoomAssign">预定分房入住</router-link>
         </ul>
       </el-aside>
       <el-container>
@@ -27,6 +30,16 @@ export default {
   name: 'layout',
   components: {
     NavBar
+  },
+  computed: {
+    shopId: function () {
+      return this.$store.getters.getShopId
+    }
+  },
+  watch: {
+    shopId: function () {
+      location.reload()
+    }
   }
 }
 </script>
@@ -60,4 +73,3 @@ export default {
   height: 100%;
 }
 </style>
-

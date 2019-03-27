@@ -48,11 +48,10 @@
             </el-table-column>
         </el-table>
 
-        <order-detail
-                :order-no="viewsDetailOrderNo"
-                :show="viewsDetailDialogVisible"
-                @openOrderDialog="viewsDetailDialogVisible=$event">
-        </order-detail>
+        <order-detail-dialog
+                ref="orderDetailDialog"
+                :order-no="viewsDetailOrderNo">
+        </order-detail-dialog>
     </div>
 </template>
 
@@ -61,12 +60,12 @@ import { dateStringToDateNum } from '@/utils/date'
 import { getOrders } from '@/api/order'
 import { roomtypes } from '@/api/room'
 // import OrderDetail from '../../orderPage/components/OrderDetail'
-import OrderDetail from '../../orderDetailDialog/OrderDetailDialog'
+import OrderDetailDialog from '../../orderDetailDialog/OrderDetailDialog'
 
 export default {
   name: 'OrderList',
   props: ['currentDateNum'],
-  components: {OrderDetail},
+  components: {OrderDetailDialog},
   data () {
     return {
       loadingOrderList: false,
@@ -74,14 +73,21 @@ export default {
       pageTotal: 1,
       pageSize: 1,
       currentPage: 1,
-      viewsDetailDialogVisible: false,
       viewsDetailOrderNo: ''
     }
   },
   created () {
     this.getOrderList()
   },
+  computed: {
+    isReload: function () {
+      return this.$store.getters.getIsChosen
+    }
+  },
   watch: {
+    isReload () {
+      this.getOrderList()
+    },
     currentDateNum: function () {
       this.getOrderList()
     }
@@ -92,7 +98,13 @@ export default {
       this.getOrderList(false)
     },
     setOrderList: function (data) {
-      this.orderList = data
+      let list = data
+      list.data.forEach(function (item) {
+        item.detail.forEach(function (detailItem) {
+          detailItem.type_id = list.meta.goods[detailItem.goods_no].type_id
+        })
+      })
+      this.orderList = list.data
     },
     getOrderList: function (isInitial) {
       if (isInitial === undefined) {
@@ -124,7 +136,7 @@ export default {
       this.loadingOrderList = true
       getOrders(query).then(response => {
         this.loadingOrderList = false
-        this.setOrderList(response.data.data)
+        this.setOrderList(response.data)
         this.pageTotal = +response.data.meta.pagination.total
         this.pageSize = +response.data.meta.pagination.per_page
         this.currentPage = +response.data.meta.pagination.currentPage
@@ -133,10 +145,11 @@ export default {
       })
     },
     isOrderItemChosen: function (row) {
+      let _this = this
       // -1 未排房 0 已排房（未排完） 1 已排房
       let currentDate = +this.currentDateNum
       let list = row.detail.filter(function (item) {
-        return +dateStringToDateNum(item.use_time) === currentDate && item.is_del === 0
+        return +dateStringToDateNum(item.use_time) === currentDate && item.is_del === 0 && item.type_id !== -1 && item.store_no === _this.$store.getters.getShopId
       })
       let arrayChosen = list.map(function (item) {
         let code = -1
@@ -163,7 +176,7 @@ export default {
       }
     },
     handleOrderDetail: function (OrderNo) {
-      this.viewsDetailDialogVisible = true
+      this.$refs.orderDetailDialog.showDialog()
       this.viewsDetailOrderNo = OrderNo
     },
     getOrderRooms: function (order) {
@@ -185,7 +198,7 @@ export default {
           tempRooms.push(rooms[i])
         }
       }
-      return tempRooms.join(' / ')
+      return tempRooms.join(', ')
     }
   }
 }

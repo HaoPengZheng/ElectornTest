@@ -152,12 +152,10 @@
     </el-dialog>
 
     <!-- 订单详情 -->
-    <order-detail
-      :order-no="viewsDetailOrderNo"
-      :show="viewsDetailDialogVisible"
-      @openOrderDialog="viewsDetailDialogVisible=$event"
-    >
-    </order-detail>
+    <order-detail-dialog
+            ref="orderDetailDialog"
+            :order-no="viewsDetailOrderNo">
+    </order-detail-dialog>
     <!-- 订单快速搜索框 -->
     <div>
       <el-card
@@ -202,21 +200,20 @@ import OrderListHelper from './OrderListHelper'
 import DialogCard from '@/components/DialogCard/DialogCard'
 import { getOrders, getOrderStatusOptions } from '@/api/order'
 import objectUtil from '@/utils/ObjectUtil'
-import OrderDetail from '../../orderDetailDialog/OrderDetailDialog'
+import OrderDetailDialog from '../../orderDetailDialog/OrderDetailDialog'
 import SettleAccount from '../../orderSettleAccountDialog/OrderSettleAccountDialog'
 export default {
   name: 'order-list',
   components: {
     OrderListToolBar,
     SettleAccount,
-    OrderDetail,
+    OrderDetailDialog,
     DialogCard
   },
   data () {
     return {
       OrderListHelper: OrderListHelper,
       settleAccountsDialogVisible: false,
-      viewsDetailDialogVisible: false,
       cancelOrderDialogVisible: false,
       viewsDetailOrderNo: '',
       viewsSettleAccountOrderNo: '',
@@ -265,7 +262,7 @@ export default {
       this.viewsSettleAccountOrderNo = orderNo
     },
     viewsDetail (orderNo) {
-      this.viewsDetailDialogVisible = true
+      this.$refs.orderDetailDialog.showDialog()
       this.viewsDetailOrderNo = orderNo
     },
     getPeoples (peoples) {

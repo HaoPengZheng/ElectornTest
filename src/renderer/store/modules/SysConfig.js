@@ -1,8 +1,8 @@
 const state = {
-  base_api: 'http://192.168.101.172/Hotel-app/api',
-  socket_host: 'http://192.168.101.128:6001',
+  base_api: 'http://192.168.101.115:8089/api',
+  socket_host: 'http://192.168.101.115:6001',
   company: 66,
-  shop: 51
+  shop: +sessionStorage.getItem('shopId') || 51
 }
 const getters = {
   getBaseApi: (state) => {
@@ -30,6 +30,7 @@ const mutations = {
   },
   Update_Shop_Id (state, shopId) {
     state.shop = shopId
+    sessionStorage.setItem('shopId', shopId)
   }
 }
 const actions = {

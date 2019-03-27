@@ -7,9 +7,13 @@ import RoomSurplus from '../views/roomSurplus/RoomSurplus'
 import ChooseRoom from '../views/chooseRoom/ChooseRoom'
 import OrderPage from '../views/orderPage/OrderPage'
 import RoomAccountManagement from '../views/roomAccountManagement/RoomAccountManagement'
+import RoomCard from '../views/roomCard/RoomCard'
 import ReceptionAssistant from '../views/receptionAssistant/ReceptionAssistant'
 import CallAssistant from '../views/receptionAssistant/components/CallAssistant'
 import WakeupAssistant from '../views/receptionAssistant/components/WakeupAssistant'
+import AddOrder from '../views/addOrder/AddOrder'
+import RoomAssign from '../views/roomAssign/RoomAssign'
+
 Vue.use(Router)
 
 export default new Router({
@@ -71,6 +75,21 @@ export default new Router({
         path: '/hotal-management/RoomAccountManagement',
         name: 'RoomAccountManagement',
         component: RoomAccountManagement
+      },
+      {
+        path: '/hotal-management/RoomCard',
+        name: 'RoomCard',
+        component: RoomCard
+      },
+      {
+        path: '/hotal-management/AddOrder',
+        name: 'AddOrder',
+        component: AddOrder
+      },
+      {
+        path: '/hotal-management/RoomAssign',
+        name: 'RoomAssign',
+        component: RoomAssign
       }
       ]
     }

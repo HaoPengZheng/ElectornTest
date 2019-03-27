@@ -142,3 +142,12 @@ export function autoArrangeRooms (data) {
     data
   })
 }
+
+// 业务--排房
+export function arrangeRooms (data) {
+  return request({
+    url: '/arrangeRooms',
+    method: 'POST',
+    data
+  })
+}

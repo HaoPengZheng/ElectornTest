@@ -1,7 +1,8 @@
 const state = {
   roomList: [],
   roomTypeList: [],
-  roomListById: {}
+  roomListById: {},
+  isChosen: ''
 }
 const getters = {
   getRoomList: (state) => {
@@ -9,6 +10,9 @@ const getters = {
   },
   getRoomTypeList: (state) => {
     return state.roomTypeList
+  },
+  getIsChosen: (state) => {
+    return state.isChosen
   }
 }
 const mutations = {
@@ -20,6 +24,9 @@ const mutations = {
   },
   Update_Room_Type_List (state, roomTypeList) {
     state.roomTypeList = roomTypeList
+  },
+  Update_Is_Chosen (state, isChosen) {
+    state.isChosen = isChosen
   }
 }
 const actions = {
@@ -28,6 +35,9 @@ const actions = {
   },
   updateRoomTypeList ({commit}, roomTypeList) {
     commit('Update_Room_Type_List', roomTypeList)
+  },
+  updateIsChosen ({commit}, isChosen) {
+    commit('Update_Is_Chosen', isChosen)
   }
 }
 export default {

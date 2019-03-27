@@ -1,17 +1,17 @@
 <template>
-  <div>
+  <div v-loading="loadingDetail">
     <div class="order_detail_container">
       <table class="t table table-bordered table-hover table_info">
         <tbody>
           <tr class="table_info_tr">
-            <td><span class="info_name">订单号:</span>{{order_no}}</td>
-            <td><span class="info_name">订购人:</span>{{detailData.customer}}</td>
-            <td><span class="info_name">电话:</span>{{detailData.phone}}</td>
+            <td><span class="info_name">订单号:</span><span class="info-value">{{order_no}}</span></td>
+            <td><span class="info_name">订购人:</span><span class="info-value">{{detailData.customer}}</span></td>
+            <td><span class="info_name">电话:</span><span class="info-value">{{detailData.phone}}</span></td>
           </tr>
           <tr class="table_info_tr">
-            <td><span class="info_name">支付方式:</span>{{detailData.pay_type}}</td>
-            <td><span class="info_name">订单类型:</span>{{detailData.order_type}}</td>
-            <td><span class="info_name">创建时间:</span>2018-12-24 13:56:25</td>
+            <td><span class="info_name">支付方式:</span><span class="info-value">{{detailData.pay_type}}</span></td>
+            <td><span class="info_name">订单类型:</span><span class="info-value">{{detailData.order_type}}</span></td>
+            <td><span class="info_name">创建时间:</span><span class="info-value">2018-12-24 13:56:25</span></td>
           </tr>
         </tbody>
       </table>
@@ -23,6 +23,7 @@
             <td class="td_title">使用时间</td>
             <td class="td_title">小计</td>
             <td class="td_title">房间号</td>
+            <td class="td_title">操作</td>
           </tr>
           <tr v-if="detailData.detail.length===0">
             <td colspan="5">
@@ -34,12 +35,10 @@
             <td>{{detail.quantity}}</td>
             <td>{{detail.use_time}}</td>
             <td>{{detail.price}}</td>
+            <td>{{detail.roomNosList.length ? detail.roomNosList.join(", ") : '无'}}</td>
             <td>
-              <span v-if="detail.roomNos === '无'">
-                <el-button size="mini" type="primary"
-                @click="handleChooseRoom(detail)">选房</el-button>
-              </span>
-              <span v-else>{{detail.roomNos}}</span>
+              <el-button size="mini" type="primary" v-if="(detail.action === 1)" @click="handleChooseRoom(detail)">选房</el-button>
+              <span v-if="(detail.action === -1)">不可选房</span>
             </td>
           </tr>
         </tbody>
@@ -86,37 +85,22 @@
           </tr>
           <tr class="tr_b_remark">
             <td class="td_title">后台备注:</td>
-            <td
-              class="td_bs_remark"
-              colspan="5"
-            ><span class="remark_txt"></span>
+            <td class="td_bs_remark" colspan="5">
+              <span class="remark_txt"></span>
               <el-tag
                 v-for="(tag,index) in remarkList"
                 :key="tag"
                 :color="colorList[index]" class="my-tag"
                 :style="{'color':oppositeColor(colorList[index])}"
-                closable
-              >
-                {{tag}}
-              </el-tag>
-              <el-button
-                type="text"
-                @click="showBackendRemarkDialog"
-              >
-                添加
-              </el-button>
+                closable>{{tag}}</el-tag>
+              <el-button type="text" @click="showBackendRemarkDialog">添加</el-button>
             </td>
           </tr>
           <tr class="tr_pay_remark">
             <td class="td_title">支付记录:</td>
-            <td
-              colspan="5"
-              class="td_pay_record"
-            >
-              <div
-                class="pay_remark"
-                title=""
-              >支付时间：2018-12-24 16:12:27 操作员:田彬2 微信公众号 收入:500.00
+            <td colspan="5" class="td_pay_record">
+              <div class="pay_remark" title="">
+                支付时间：2018-12-24 16:12:27 操作员:田彬2 微信公众号 收入:500.00
                 <el-button size="mini">修改</el-button>
                 <el-button size="mini">撤销</el-button>
               </div>
@@ -130,49 +114,37 @@
         title="后台备注"
         :visible.sync="backendRemarkDialogVisible"
         append-to-body
-        width="30%"
-      >
+        width="30%">
         <div>
           <div>
-            <el-checkbox-group
-              v-model="remarkSelect"
-              size="small"
-            >
+            <el-checkbox-group v-model="remarkSelect" size="small">
               <el-checkbox
                 :label="option"
                 v-for="(option,index) in remarkOptions"
                 :key="option"
                 border
-                :class="{'mg-left-10':index===0}"
-              ></el-checkbox>
+                :class="{'mg-left-10':index===0}"></el-checkbox>
             </el-checkbox-group>
           </div>
           <div class="mg-left-10">
-            <el-input
-              type="textarea"
-              placeholder="填写备注内容"
-            ></el-input>
+            <el-input type="textarea" placeholder="填写备注内容"></el-input>
           </div>
           <div class="remark-footer">
-            <el-button
-              type="danger"
-              size="small"
-            >保存</el-button>
+            <el-button type="danger" size="small">保存</el-button>
           </div>
         </div>
       </el-dialog>
     </div>
     <choose-room-dialog
-            :currentGoodsNo="currentGoodsNo"
-            :currentQuantity="currentQuantity"
-            :openDialog="openDialog"
-            @openDialog="openDialog=$event"></choose-room-dialog>
+            ref="chooseRoomDialog"
+            @loadingStart="loadingDetail=true"
+            @loadingEnd="loadingDetail=false"></choose-room-dialog>
   </div>
 </template>
 <script>
 import {getOrderDetail} from '@/api/order'
 import {dateStringToDateNum} from '@/utils/date'
-import ChooseRoomDialog from '../../chooseRoomDialog/chooseRoomDialog'
+import ChooseRoomDialog from '../../chooseRoomDialog/ChooseRoomDialog'
 export default {
   props: {
     orderNo: String
@@ -180,6 +152,7 @@ export default {
   components: {ChooseRoomDialog},
   data () {
     return {
+      loadingDetail: false,
       backendRemarkDialogVisible: false,
       remarkSelect: [],
       remarkOptions: ['散客', 'L类保密', '尊尚', '加1童', '大床', '非吸烟', '送单车', '送单车及千色', '双床', '相连房', '高楼层', '送千色', '时光邮驿'],
@@ -195,15 +168,11 @@ export default {
         payed_sum: '',
         contacts: [],
         pay_remark: ''
-      },
-      openDialog: false,
-      currentGoodsNo: '',
-      currentQuantity: ''
+      }
     }
   },
   computed: {
     remarkList () {
-      console.log(this.detailData.pay_remark)
       let tags = this.detailData.pay_remark.split(';')
       tags.forEach((tag, index) => {
         if (!this.remarkOptions.includes(tag.trim())) {
@@ -211,9 +180,15 @@ export default {
         }
       })
       return tags
+    },
+    isReload: function () {
+      return this.$store.getters.getIsChosen
     }
   },
   watch: {
+    isReload () {
+      this.fetchOrderDetailData()
+    },
     remarkList (newList) {
       while (this.colorList.length < newList.length) {
         this.colorList.push(this.color16())
@@ -230,9 +205,9 @@ export default {
   },
   methods: {
     fetchOrderDetailData () {
-      this.$emit('openLoadingOrderDetail', true)
+      this.$emit('loadingStart')
       getOrderDetail(this.order_no).then(reponse => {
-        this.$emit('openLoadingOrderDetail', false)
+        this.$emit('loadingEnd')
         let data = reponse.data.data
         this.detailData.customer = data.customer
         this.detailData.phone = data.phone
@@ -244,26 +219,31 @@ export default {
         this.detailData.contacts = data.contacts
         this.detailData.pay_remark = data.pay_remark
         this.detailData.detail.forEach(ele => {
-          ele.roomNos = this.getRoomNosByDetail(ele)
+          ele['action'] = this.getOrderDetailAction(ele, data.state)
+          ele.roomNosList = this.getRoomNosByDetail(ele)
         })
       }).catch(reason => {
-        this.$emit('openLoadingOrderDetail', false)
+        this.$emit('loadingEnd')
+        this.$message.error(reason.message)
       })
     },
     getRoomNosByDetail (detail) {
       let key = dateStringToDateNum(detail.use_time)
-      let roomNos = ''
       if (detail === null || detail.room_nos === null || !detail.room_nos.hasOwnProperty(key)) {
-        return '无'
+        return []
       }
-      detail.room_nos[key].forEach((ele, index) => {
-        roomNos += ele.room_id
-        if (index > 0) {
-          roomNos += ','
-        }
+      let roomNos = Object.values(detail.room_nos[key]).map(function (item) {
+        return item.room_id + ''
       })
-      console.log(roomNos)
       return roomNos
+    },
+    getOrderDetailAction: function (data, state) {
+      // -1不可选 1可选
+      if (data.type_id !== -1 && data.store_no === this.$store.getters.getShopId && (state === '未支付' || state === '已支付' || state === '已完成')) {
+        return 1
+      } else {
+        return -1
+      }
     },
     showBackendRemarkDialog () {
       this.backendRemarkDialogVisible = true
@@ -276,7 +256,6 @@ export default {
       if (color.length < 7) {
         color += Math.floor(Math.random() * 10)
       }
-      console.log(color)
       return color
     },
     oppositeColor (color) {
@@ -295,14 +274,8 @@ export default {
       return whiteColor
     },
     handleChooseRoom (detail) {
-      // let orderNo = detail.order_no
-      // let detailId = detail.id
-      // let inTime = dateStringToDateNum(detail.use_time)
-      // let outTime = (+inTime + 24 * 60 * 60) + ''
-      // let roomId = ''
-      this.openDialog = true
-      this.currentGoodsNo = detail.goods_no
-      this.currentQuantity = detail.quantity
+      this.$refs.chooseRoomDialog.showDialog()
+      this.$refs.chooseRoomDialog.setOrderItem(detail)
     }
   }
 }
@@ -326,40 +299,21 @@ export default {
   text-align: left;
   tr td {
     height: 35px;
-    line-height: 35px;
-    padding: 0 10px;
-    padding-top: 0px;
-    padding-right: 10px;
-    padding-bottom: 0px;
-    padding-left: 10px;
+    padding: 5px 10px;
     border: 1px solid #d6d6d8;
-    border-top-color: rgb(214, 214, 216);
-    border-top-style: solid;
-    border-top-width: 1px;
-    border-right-color: rgb(214, 214, 216);
-    border-right-style: solid;
-    border-right-width: 1px;
-    border-bottom-color: rgb(214, 214, 216);
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-    border-left-color: rgb(214, 214, 216);
-    border-left-style: solid;
-    border-left-width: 1px;
-    border-image-source: initial;
-    border-image-slice: initial;
-    border-image-width: initial;
-    border-image-outset: initial;
-    border-image-repeat: initial;
     font-size: 12px;
+    vertical-align: middle;
   }
   .tr_title {
     background: #f4f4f4;
   }
   .table_info_tr td {
     padding: 0;
+    vertical-align: middle;
   }
   .info_name {
-    display: inline-block;
+    display: flex;
+    align-items: center;
     width: 80px;
     height: 100%;
     font-weight: bold;
@@ -369,6 +323,12 @@ export default {
     margin-right: 10px;
     font-size: 13px;
     float: left;
+    vertical-align: middle;
+  }
+  .info-value {
+    display: flex;
+    align-items: center;
+    height: 100%;
   }
 }
 .my-tag{
